@@ -318,6 +318,72 @@
             margin: 1rem 0;
             border-radius: 0 8px 8px 0;
         }
+        
+        .premium-badge {
+            background: linear-gradient(90deg, #f59e0b, #f97316);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            margin-left: 8px;
+        }
+        
+        .plan-card {
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .plan-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .plan-card.recommended {
+            border-color: #f59e0b;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .plan-card.recommended::before {
+            content: "RECOMENDADO";
+            position: absolute;
+            top: 15px;
+            right: -30px;
+            background: #f59e0b;
+            color: white;
+            font-size: 0.7rem;
+            font-weight: bold;
+            padding: 3px 30px;
+            transform: rotate(45deg);
+        }
+        
+        .plan-feature {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .plan-feature i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .audio-disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .infinite-lives {
+            animation: infinite-pulse 2s infinite;
+        }
+        
+        @keyframes infinite-pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
     </style>
 </head>
 <body class="min-h-screen">
@@ -337,11 +403,11 @@
                 
                 <div class="flex items-center space-x-6">
                     <div class="hidden md:flex items-center space-x-4">
-                        <div class="flex items-center space-x-2 bg-gray-800 rounded-full px-4 py-2">
+                        <div class="flex items-center space-x-2 bg-gray-800 rounded-full px-4 py-2 cursor-pointer" id="profile-button">
                             <div class="w-8 h-8 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 flex items-center justify-center">
                                 <span class="font-bold text-white">U</span>
                             </div>
-                            <span class="text-sm">Dev</span>
+                            <span class="text-sm" id="user-plan-display">Gratis</span>
                             <i class="fas fa-chevron-down text-gray-400"></i>
                         </div>
                         
@@ -357,7 +423,7 @@
                         
                         <!-- Sistema de Vidas -->
                         <div class="flex items-center space-x-2">
-                            <div class="flex space-x-1">
+                            <div class="flex space-x-1" id="lives-container">
                                 <div class="life w-6 h-6 rounded-full bg-red-500 flex items-center justify-center">
                                     <i class="fas fa-heart text-white text-xs"></i>
                                 </div>
@@ -552,7 +618,7 @@
                                 
                                 <!-- Vidas -->
                                 <div class="flex items-center space-x-2 bg-gray-800 rounded-full px-4 py-2">
-                                    <div class="flex space-x-1">
+                                    <div class="flex space-x-1" id="gamification-lives-container">
                                         <div class="life w-5 h-5 rounded-full bg-red-500 flex items-center justify-center" id="life-1">
                                             <i class="fas fa-heart text-white text-xs"></i>
                                         </div>
@@ -593,6 +659,136 @@
                 </div>
             </div>
         </div>
+
+        <!-- Tela de Planos -->
+        <div id="plans-screen" class="screen">
+            <div class="container mx-auto px-6 py-8">
+                <button id="back-from-plans" class="back-button mb-6 bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-lg transition-all duration-300 flex items-center">
+                    <i class="fas fa-arrow-left mr-2"></i>Voltar
+                </button>
+                
+                <div class="max-w-6xl mx-auto">
+                    <div class="text-center mb-12 fade-in">
+                        <h2 class="text-4xl font-bold gradient-text mb-4">Escolha seu Plano</h2>
+                        <p class="text-xl text-gray-300 max-w-2xl mx-auto">Desbloqueie todo o potencial da plataforma CodeMaster</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <!-- Plano Gratis -->
+                        <div class="plan-card bg-gray-800/50 rounded-2xl p-8">
+                            <div class="text-center mb-6">
+                                <h3 class="text-2xl font-bold mb-2">Gratis</h3>
+                                <div class="text-4xl font-bold mb-4">R$ 0<span class="text-lg text-gray-400">/mês</span></div>
+                                <p class="text-gray-400">Perfeito para começar sua jornada</p>
+                            </div>
+                            
+                            <div class="mb-8">
+                                <div class="plan-feature">
+                                    <i class="fas fa-check text-green-500"></i>
+                                    <span>Acesso a todos os conteúdos</span>
+                                </div>
+                                <div class="plan-feature">
+                                    <i class="fas fa-check text-green-500"></i>
+                                    <span>3 vidas para desafios</span>
+                                </div>
+                                <div class="plan-feature">
+                                    <i class="fas fa-times text-red-500"></i>
+                                    <span>Áudios explicativos</span>
+                                </div>
+                                <div class="plan-feature">
+                                    <i class="fas fa-times text-red-500"></i>
+                                    <span>Conteúdos complementares</span>
+                                </div>
+                                <div class="plan-feature">
+                                    <i class="fas fa-times text-red-500"></i>
+                                    <span>Vidas infinitas</span>
+                                </div>
+                            </div>
+                            
+                            <button class="w-full bg-gray-700 hover:bg-gray-600 py-3 rounded-lg transition-all duration-300" id="select-free-plan">
+                                Plano Atual
+                            </button>
+                        </div>
+                        
+                        <!-- Plano Pro -->
+                        <div class="plan-card bg-gray-800/50 rounded-2xl p-8 recommended">
+                            <div class="text-center mb-6">
+                                <h3 class="text-2xl font-bold mb-2">Pro</h3>
+                                <div class="text-4xl font-bold mb-4">R$ 29<span class="text-lg text-gray-400">/mês</span></div>
+                                <p class="text-gray-400">Para quem quer acelerar o aprendizado</p>
+                            </div>
+                            
+                            <div class="mb-8">
+                                <div class="plan-feature">
+                                    <i class="fas fa-check text-green-500"></i>
+                                    <span>Acesso a todos os conteúdos</span>
+                                </div>
+                                <div class="plan-feature">
+                                    <i class="fas fa-check text-green-500"></i>
+                                    <span>3 vidas para desafios</span>
+                                </div>
+                                <div class="plan-feature">
+                                    <i class="fas fa-check text-green-500"></i>
+                                    <span>Áudios explicativos</span>
+                                </div>
+                                <div class="plan-feature">
+                                    <i class="fas fa-times text-red-500"></i>
+                                    <span>Conteúdos complementares</span>
+                                </div>
+                                <div class="plan-feature">
+                                    <i class="fas fa-times text-red-500"></i>
+                                    <span>Vidas infinitas</span>
+                                </div>
+                            </div>
+                            
+                            <button class="w-full bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 py-3 rounded-lg transition-all duration-300 transform hover:scale-105" id="select-pro-plan">
+                                Assinar Agora
+                            </button>
+                        </div>
+                        
+                        <!-- Plano Premium -->
+                        <div class="plan-card bg-gray-800/50 rounded-2xl p-8">
+                            <div class="text-center mb-6">
+                                <h3 class="text-2xl font-bold mb-2">Premium</h3>
+                                <div class="text-4xl font-bold mb-4">R$ 59<span class="text-lg text-gray-400">/mês</span></div>
+                                <p class="text-gray-400">Experiência completa de aprendizado</p>
+                            </div>
+                            
+                            <div class="mb-8">
+                                <div class="plan-feature">
+                                    <i class="fas fa-check text-green-500"></i>
+                                    <span>Acesso a todos os conteúdos</span>
+                                </div>
+                                <div class="plan-feature">
+                                    <i class="fas fa-check text-green-500"></i>
+                                    <span>Vidas infinitas</span>
+                                </div>
+                                <div class="plan-feature">
+                                    <i class="fas fa-check text-green-500"></i>
+                                    <span>Áudios explicativos</span>
+                                </div>
+                                <div class="plan-feature">
+                                    <i class="fas fa-check text-green-500"></i>
+                                    <span>Conteúdos complementares</span>
+                                </div>
+                                <div class="plan-feature">
+                                    <i class="fas fa-check text-green-500"></i>
+                                    <span>Suporte prioritário</span>
+                                </div>
+                            </div>
+                            
+                            <button class="w-full bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 py-3 rounded-lg transition-all duration-300 transform hover:scale-105" id="select-premium-plan">
+                                Assinar Agora
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-12 text-center">
+                        <p class="text-gray-400">Todos os planos incluem acesso completo à plataforma e atualizações regulares de conteúdo.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Elemento de Áudio -->
@@ -614,7 +810,8 @@
             perfectLessons: {},
             currentStreak: 0,
             longestStreak: 0,
-            lastActivity: null
+            lastActivity: null,
+            plan: 'free' // 'free', 'pro', 'premium'
         };
         
         // Carregar dados do usuário
@@ -633,6 +830,9 @@
         
         // Verificar e restaurar vidas
         function checkAndRestoreLives() {
+            // Se o usuário tem plano premium, não precisa restaurar vidas
+            if (userData.plan === 'premium') return;
+            
             const now = Date.now();
             const oneHour = 60 * 60 * 1000; // 1 hora em milissegundos
             
@@ -650,7 +850,7 @@
         // Atualizar timer de restauração de vidas
         function updateLivesRestoreTimer() {
             const timerElement = document.getElementById('lives-restore-timer');
-            if (!timerElement || !userData.lastLifeLoss) return;
+            if (!timerElement || !userData.lastLifeLoss || userData.plan === 'premium') return;
             
             const now = Date.now();
             const oneHour = 60 * 60 * 1000;
@@ -671,6 +871,9 @@
         
         // Perder uma vida
         function loseLife() {
+            // Se o usuário tem plano premium, não perde vidas
+            if (userData.plan === 'premium') return;
+            
             if (userData.lives > 0) {
                 userData.lives--;
                 userData.lastLifeLoss = Date.now();
@@ -695,24 +898,72 @@
         
         // Atualizar exibição de vidas
         function updateLivesDisplay() {
-            const lifeElements = [
-                document.getElementById('life-1'),
-                document.getElementById('life-2'),
-                document.getElementById('life-3')
-            ];
-            
-            lifeElements.forEach((element, index) => {
-                if (element) {
-                    if (index < userData.lives) {
-                        element.classList.remove('lost');
-                    } else {
-                        element.classList.add('lost');
+            // Atualizar vidas no header
+            const livesContainer = document.getElementById('lives-container');
+            if (livesContainer) {
+                if (userData.plan === 'premium') {
+                    livesContainer.innerHTML = `
+                        <div class="life w-6 h-6 rounded-full bg-purple-500 flex items-center justify-center infinite-lives">
+                            <i class="fas fa-infinity text-white text-xs"></i>
+                        </div>
+                    `;
+                } else {
+                    let livesHTML = '';
+                    for (let i = 0; i < 3; i++) {
+                        const isActive = i < userData.lives;
+                        livesHTML += `
+                            <div class="life w-6 h-6 rounded-full ${isActive ? 'bg-red-500' : 'bg-gray-600'} flex items-center justify-center">
+                                <i class="fas fa-heart text-white text-xs"></i>
+                            </div>
+                        `;
                     }
+                    livesContainer.innerHTML = livesHTML;
                 }
-            });
+            }
+            
+            // Atualizar vidas na tela de gamificação
+            const gamificationLivesContainer = document.getElementById('gamification-lives-container');
+            if (gamificationLivesContainer) {
+                if (userData.plan === 'premium') {
+                    gamificationLivesContainer.innerHTML = `
+                        <div class="life w-5 h-5 rounded-full bg-purple-500 flex items-center justify-center infinite-lives">
+                            <i class="fas fa-infinity text-white text-xs"></i>
+                        </div>
+                    `;
+                } else {
+                    let livesHTML = '';
+                    for (let i = 0; i < 3; i++) {
+                        const isActive = i < userData.lives;
+                        livesHTML += `
+                            <div class="life w-5 h-5 rounded-full ${isActive ? 'bg-red-500' : 'bg-gray-600'} flex items-center justify-center" id="life-${i+1}">
+                                <i class="fas fa-heart text-white text-xs"></i>
+                            </div>
+                        `;
+                    }
+                    gamificationLivesContainer.innerHTML = livesHTML;
+                }
+            }
             
             // Atualizar timer de restauração
             updateLivesRestoreTimer();
+        }
+        
+        // Atualizar exibição do plano do usuário
+        function updatePlanDisplay() {
+            const planDisplay = document.getElementById('user-plan-display');
+            if (planDisplay) {
+                switch(userData.plan) {
+                    case 'free':
+                        planDisplay.textContent = 'Gratis';
+                        break;
+                    case 'pro':
+                        planDisplay.textContent = 'Pro';
+                        break;
+                    case 'premium':
+                        planDisplay.textContent = 'Premium';
+                        break;
+                }
+            }
         }
         
         // Adicionar XP
@@ -818,6 +1069,9 @@
                         <h3 class="text-2xl font-bold text-white mb-4">Sem Vidas!</h3>
                         <p class="text-red-100 mb-6">Você perdeu todas as suas vidas. Elas serão restauradas automaticamente em 1 hora.</p>
                         <div class="flex space-x-4 justify-center">
+                            <button id="upgrade-plan-no-lives" class="bg-gradient-to-r from-purple-500 to-pink-600 font-bold px-6 py-3 rounded-lg transition-all duration-300 transform hover:scale-105">
+                                <i class="fas fa-crown mr-2"></i>Fazer Upgrade
+                            </button>
                             <button id="close-no-lives" class="bg-white text-red-700 font-bold px-6 py-3 rounded-lg transition-all duration-300 transform hover:scale-105">
                                 Entendi
                             </button>
@@ -834,6 +1088,14 @@
                     noLivesElement.remove();
                 }
                 showLevelsScreen();
+            });
+            
+            document.getElementById('upgrade-plan-no-lives').addEventListener('click', function() {
+                const noLivesElement = document.querySelector('.fixed.inset-0');
+                if (noLivesElement) {
+                    noLivesElement.remove();
+                }
+                showPlansScreen();
             });
         }
         
@@ -854,6 +1116,7 @@
                         duration: "15 min", 
                         icon: "fas fa-play-circle", 
                         color: "green",
+                        premium: false,
                         gamification: {
                             steps: [
                                 {
@@ -1010,6 +1273,7 @@ let emailValido = email.<span class="code-gap" id="code-gap">______</span>("@");
                         duration: "20 min", 
                         icon: "fas fa-database", 
                         color: "green",
+                        premium: false,
                         gamification: {
                             steps: [
                                 {
@@ -1090,6 +1354,7 @@ let carrinho = [];</pre>
                         duration: "25 min", 
                         icon: "fas fa-calculator", 
                         color: "green",
+                        premium: false,
                         gamification: {
                             steps: [
                                 {
@@ -1134,6 +1399,7 @@ let elegivelDesconto = ehClienteVIP || temCupom;</pre>
                         duration: "30 min", 
                         icon: "fas fa-cube", 
                         color: "green",
+                        premium: false,
                         gamification: {
                             steps: [
                                 {
@@ -1179,6 +1445,7 @@ function formatarMoeda(valor) {
                         duration: "35 min", 
                         icon: "fas fa-list", 
                         color: "green",
+                        premium: false,
                         gamification: {
                             steps: [
                                 {
@@ -1220,6 +1487,49 @@ let produto = {
                                 }
                             ]
                         }
+                    },
+                    { 
+                        id: 6, 
+                        title: "Conteúdo Complementar: Debug Avançado", 
+                        description: "Ferramentas e técnicas profissionais", 
+                        duration: "25 min", 
+                        icon: "fas fa-bug", 
+                        color: "green",
+                        premium: true,
+                        gamification: {
+                            steps: [
+                                {
+                                    type: "theory",
+                                    title: "Debug Profissional",
+                                    content: `
+                                        <div class="mb-6">
+                                            <h3 class="text-xl font-bold mb-4 text-indigo-400">Técnicas Avançadas de Debug</h3>
+                                            <p class="text-gray-300 mb-4">
+                                                Em projetos reais, o debug vai além do console.log. Aprenda técnicas profissionais para identificar e corrigir problemas.
+                                            </p>
+                                            <div class="bg-gray-900 rounded-lg p-4 mb-4">
+                                                <h4 class="font-bold mb-2 text-green-400">Exemplo: Debug de Performance</h4>
+                                                <pre class="text-green-400 code-editor bg-gray-800 p-4 rounded-lg overflow-x-auto">
+// Medição de performance
+console.time('processamento');
+// Código a ser medido
+for (let i = 0; i < 1000000; i++) {
+    // Operação intensiva
+}
+console.timeEnd('processamento');</pre>
+                                            </div>
+                                            <div class="real-scenario">
+                                                <h4 class="font-bold mb-2 text-blue-400">Cenário Real:</h4>
+                                                <p class="text-sm text-gray-300">
+                                                    Você está otimizando uma aplicação lenta. Precisa identificar quais funções estão consumindo mais tempo de execução.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    `,
+                                    audioUrl: "audios/debug-avancado.mp3"
+                                }
+                            ]
+                        }
                     }
                 ],
                 achievements: [
@@ -1240,6 +1550,7 @@ let produto = {
                         duration: "25 min", 
                         icon: "fas fa-code-branch", 
                         color: "blue",
+                        premium: false,
                         gamification: {
                             steps: [
                                 {
@@ -1286,6 +1597,7 @@ function verificarAcesso(usuario, recurso) {
                         duration: "30 min", 
                         icon: "fas fa-redo", 
                         color: "blue",
+                        premium: false,
                         gamification: {
                             steps: [
                                 {
@@ -1329,6 +1641,7 @@ function calcularTotal(pedidos) {
                         duration: "40 min", 
                         icon: "fas fa-cubes", 
                         color: "blue",
+                        premium: false,
                         gamification: {
                             steps: [
                                 {
@@ -1367,6 +1680,57 @@ usuarios.forEach(usuario => {
                                 }
                             ]
                         }
+                    },
+                    { 
+                        id: 4, 
+                        title: "Conteúdo Complementar: Design Patterns", 
+                        description: "Padrões de projeto em JavaScript", 
+                        duration: "45 min", 
+                        icon: "fas fa-puzzle-piece", 
+                        color: "blue",
+                        premium: true,
+                        gamification: {
+                            steps: [
+                                {
+                                    type: "theory",
+                                    title: "Padrões de Projeto JavaScript",
+                                    content: `
+                                        <div class="mb-6">
+                                            <h3 class="text-xl font-bold mb-4 text-indigo-400">Padrões em Projetos de Grande Escala</h3>
+                                            <p class="text-gray-300 mb-4">
+                                                Padrões de projeto resolvem problemas comuns de arquitetura e facilitam a manutenção de código.
+                                            </p>
+                                            <div class="bg-gray-900 rounded-lg p-4 mb-4">
+                                                <h4 class="font-bold mb-2 text-green-400">Exemplo: Módulo (Module Pattern)</h4>
+                                                <pre class="text-green-400 code-editor bg-gray-800 p-4 rounded-lg overflow-x-auto">
+// Módulo para gerenciar usuários
+const UserManager = (function() {
+    let usuarios = [];
+    
+    function adicionar(usuario) {
+        usuarios.push(usuario);
+    }
+    
+    function listar() {
+        return [...usuarios]; // Retorna cópia
+    }
+    
+    return { adicionar, listar };
+})();</pre>
+                                            </div>
+                                            <div class="real-scenario">
+                                                <h4 class="font-bold mb-2 text-blue-400">Cenário Real:</h4>
+                                                <p class="text-sm text-gray-300">
+                                                    Você está desenvolvendo uma aplicação grande com múltiplos desenvolvedores. 
+                                                    Precisa organizar o código em módulos para evitar conflitos e facilitar manutenção.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    `,
+                                    audioUrl: "audios/design-patterns.mp3"
+                                }
+                            ]
+                        }
                     }
                 ],
                 achievements: [
@@ -1387,6 +1751,7 @@ usuarios.forEach(usuario => {
                         duration: "50 min", 
                         icon: "fas fa-bolt", 
                         color: "purple",
+                        premium: false,
                         gamification: {
                             steps: [
                                 {
@@ -1433,6 +1798,7 @@ async function buscarUsuario(id) {
                         duration: "45 min", 
                         icon: "fas fa-window-maximize", 
                         color: "purple",
+                        premium: false,
                         gamification: {
                             steps: [
                                 {
@@ -1467,6 +1833,55 @@ function adicionarItemLista(texto) {
                                 }
                             ]
                         }
+                    },
+                    { 
+                        id: 3, 
+                        title: "Conteúdo Complementar: Otimização de Performance", 
+                        description: "Técnicas para aplicações rápidas", 
+                        duration: "55 min", 
+                        icon: "fas fa-tachometer-alt", 
+                        color: "purple",
+                        premium: true,
+                        gamification: {
+                            steps: [
+                                {
+                                    type: "theory",
+                                    title: "Otimização em Projetos Reais",
+                                    content: `
+                                        <div class="mb-6">
+                                            <h3 class="text-xl font-bold mb-4 text-indigo-400">Performance em Aplicações JavaScript</h3>
+                                            <p class="text-gray-300 mb-4">
+                                                A otimização de performance é crucial para aplicações modernas, especialmente em dispositivos móveis.
+                                            </p>
+                                            <div class="bg-gray-900 rounded-lg p-4 mb-4">
+                                                <h4 class="font-bold mb-2 text-green-400">Exemplo: Debounce para Busca</h4>
+                                                <pre class="text-green-400 code-editor bg-gray-800 p-4 rounded-lg overflow-x-auto">
+// Debounce para evitar múltiplas chamadas
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}</pre>
+                                            </div>
+                                            <div class="real-scenario">
+                                                <h4 class="font-bold mb-2 text-blue-400">Cenário Real:</h4>
+                                                <p class="text-sm text-gray-300">
+                                                    Você está desenvolvendo um campo de busca em tempo real. 
+                                                    Precisa otimizar as requisições para não sobrecarregar o servidor.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    `,
+                                    audioUrl: "audios/performance.mp3"
+                                }
+                            ]
+                        }
                     }
                 ],
                 achievements: [
@@ -1487,6 +1902,7 @@ function adicionarItemLista(texto) {
                         duration: "60 min", 
                         icon: "fas fa-puzzle-piece", 
                         color: "red",
+                        premium: false,
                         gamification: {
                             steps: [
                                 {
@@ -1529,6 +1945,61 @@ const UserManager = (function() {
                                 }
                             ]
                         }
+                    },
+                    { 
+                        id: 2, 
+                        title: "Conteúdo Complementar: Arquitetura de Aplicações", 
+                        description: "Estruturando projetos complexos", 
+                        duration: "70 min", 
+                        icon: "fas fa-sitemap", 
+                        color: "red",
+                        premium: true,
+                        gamification: {
+                            steps: [
+                                {
+                                    type: "theory",
+                                    title: "Arquitetura em Projetos Empresariais",
+                                    content: `
+                                        <div class="mb-6">
+                                            <h3 class="text-xl font-bold mb-4 text-indigo-400">Arquitetura de Aplicações JavaScript</h3>
+                                            <p class="text-gray-300 mb-4">
+                                                A arquitetura adequada é essencial para aplicações grandes e complexas que precisam escalar.
+                                            </p>
+                                            <div class="bg-gray-900 rounded-lg p-4 mb-4">
+                                                <h4 class="font-bold mb-2 text-green-400">Exemplo: Arquitetura MVC</h4>
+                                                <pre class="text-green-400 code-editor bg-gray-800 p-4 rounded-lg overflow-x-auto">
+// Estrutura MVC básica
+const Model = {
+    dados: [],
+    adicionar: function(item) { this.dados.push(item); },
+    listar: function() { return this.dados; }
+};
+
+const View = {
+    render: function(dados) {
+        // Renderizar dados na UI
+    }
+};
+
+const Controller = {
+    init: function() {
+        // Inicializar aplicação
+    }
+};</pre>
+                                            </div>
+                                            <div class="real-scenario">
+                                                <h4 class="font-bold mb-2 text-blue-400">Cenário Real:</h4>
+                                                <p class="text-sm text-gray-300">
+                                                    Você está liderando o desenvolvimento de uma aplicação empresarial complexa. 
+                                                    Precisa definir uma arquitetura que permita escalabilidade e manutenibilidade.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    `,
+                                    audioUrl: "audios/arquitetura.mp3"
+                                }
+                            ]
+                        }
                     }
                 ],
                 achievements: [
@@ -1553,8 +2024,10 @@ const UserManager = (function() {
         const levelsScreen = document.getElementById('levels-screen');
         const contentScreen = document.getElementById('content-screen');
         const gamificationScreen = document.getElementById('gamification-screen');
+        const plansScreen = document.getElementById('plans-screen');
         const backButton = document.getElementById('back-button');
         const backToLevelButton = document.getElementById('back-to-level-button');
+        const backFromPlansButton = document.getElementById('back-from-plans');
         const levelTitle = document.getElementById('level-title');
         const lessonsContainer = document.getElementById('lessons-container');
         const achievementsContainer = document.getElementById('achievements-container');
@@ -1562,6 +2035,7 @@ const UserManager = (function() {
         const lessonDescription = document.getElementById('lesson-description');
         const lessonContent = document.getElementById('lesson-content');
         const logo = document.getElementById('logo');
+        const profileButton = document.getElementById('profile-button');
         const gamificationLessonTitle = document.getElementById('gamification-lesson-title');
         const gamificationLessonDescription = document.getElementById('gamification-lesson-description');
         const gamificationContent = document.getElementById('gamification-content');
@@ -1571,6 +2045,9 @@ const UserManager = (function() {
         const progressDotsContainer = document.getElementById('progress-dots-container');
         const achievementsGlobalContainer = document.getElementById('achievements-global-container');
         const audioPlayer = document.getElementById('audio-player');
+        const selectFreePlanButton = document.getElementById('select-free-plan');
+        const selectProPlanButton = document.getElementById('select-pro-plan');
+        const selectPremiumPlanButton = document.getElementById('select-premium-plan');
 
         // ===== INICIALIZAÇÃO DA APLICAÇÃO =====
         document.addEventListener('DOMContentLoaded', function() {
@@ -1593,14 +2070,17 @@ const UserManager = (function() {
                 });
             });
 
-            // Configurar botão de voltar
+            // Configurar botões de navegação
             backButton.addEventListener('click', function() {
                 showLevelsScreen();
             });
 
-            // Configurar botão de voltar para módulos
             backToLevelButton.addEventListener('click', function() {
                 showLevelContent(currentLevel);
+            });
+
+            backFromPlansButton.addEventListener('click', function() {
+                showLevelsScreen();
             });
 
             // Configurar logo para voltar à tela inicial
@@ -1608,9 +2088,27 @@ const UserManager = (function() {
                 showLevelsScreen();
             });
 
+            // Configurar botão de perfil para mostrar planos
+            profileButton.addEventListener('click', function() {
+                showPlansScreen();
+            });
+
             // Configurar botão de próximo passo na gamificação
             nextGamificationStepButton.addEventListener('click', function() {
                 nextGamificationStep();
+            });
+            
+            // Configurar botões de seleção de planos
+            selectFreePlanButton.addEventListener('click', function() {
+                selectPlan('free');
+            });
+            
+            selectProPlanButton.addEventListener('click', function() {
+                selectPlan('pro');
+            });
+            
+            selectPremiumPlanButton.addEventListener('click', function() {
+                selectPlan('premium');
             });
             
             // Iniciar timer de verificação de vidas
@@ -1626,6 +2124,9 @@ const UserManager = (function() {
             
             // Atualizar vidas
             updateLivesDisplay();
+            
+            // Atualizar plano
+            updatePlanDisplay();
             
             // Atualizar progresso dos níveis
             updateLevelsProgress();
@@ -1742,6 +2243,7 @@ const UserManager = (function() {
             levelsScreen.classList.add('active');
             contentScreen.classList.remove('active');
             gamificationScreen.classList.remove('active');
+            plansScreen.classList.remove('active');
             currentLevel = null;
             currentLesson = null;
             
@@ -1754,6 +2256,7 @@ const UserManager = (function() {
             levelsScreen.classList.remove('active');
             contentScreen.classList.add('active');
             gamificationScreen.classList.remove('active');
+            plansScreen.classList.remove('active');
             
             currentLevel = level;
             const levelData = levelsData[level];
@@ -1786,6 +2289,41 @@ const UserManager = (function() {
             lessonsContainer.innerHTML = '';
             
             lessons.forEach(lesson => {
+                // Verificar se o usuário tem acesso à lição premium
+                if (lesson.premium && userData.plan !== 'premium') {
+                    // Mostrar lição premium como bloqueada
+                    const lessonCard = document.createElement('div');
+                    lessonCard.className = `lesson-card rounded-xl p-4 cursor-pointer slide-in locked`;
+                    
+                    lessonCard.innerHTML = `
+                        <div class="flex justify-between items-start mb-2">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 rounded-lg bg-${lesson.color}-900/30 flex items-center justify-center mr-3">
+                                    <i class="${lesson.icon} text-${lesson.color}-500"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold">${lesson.title} <span class="premium-badge">PREMIUM</span></h4>
+                                    <p class="text-xs text-gray-400">${lesson.description}</p>
+                                </div>
+                            </div>
+                            <i class="fas fa-lock text-gray-500 text-xl"></i>
+                        </div>
+                        <div class="flex justify-between items-center mt-3">
+                            <span class="text-xs text-gray-400 flex items-center">
+                                <i class="fas fa-clock mr-1"></i> ${lesson.duration}
+                            </span>
+                            <span class="text-xs bg-purple-900/30 text-purple-400 px-2 py-1 rounded-full">Upgrade</span>
+                        </div>
+                    `;
+                    
+                    lessonCard.addEventListener('click', function() {
+                        showUpgradePrompt();
+                    });
+                    
+                    lessonsContainer.appendChild(lessonCard);
+                    return;
+                }
+                
                 const isCompleted = userData.completedLessons[lesson.id];
                 
                 const lessonCard = document.createElement('div');
@@ -1799,7 +2337,7 @@ const UserManager = (function() {
                                 <i class="${lesson.icon} text-${lesson.color}-500"></i>
                             </div>
                             <div>
-                                <h4 class="font-bold">${lesson.title}</h4>
+                                <h4 class="font-bold">${lesson.title} ${lesson.premium ? '<span class="premium-badge">PREMIUM</span>' : ''}</h4>
                                 <p class="text-xs text-gray-400">${lesson.description}</p>
                             </div>
                         </div>
@@ -1875,6 +2413,7 @@ const UserManager = (function() {
         function showGamification(lesson) {
             contentScreen.classList.remove('active');
             gamificationScreen.classList.add('active');
+            plansScreen.classList.remove('active');
             
             currentLesson = lesson;
             currentGamificationStep = 0;
@@ -1967,7 +2506,7 @@ const UserManager = (function() {
                 <div class="gamification-card active">
                     <div class="flex justify-between items-start mb-4">
                         <h3 class="text-xl font-bold text-indigo-400">${step.title}</h3>
-                        <button class="audio-player bg-indigo-900/30 hover:bg-indigo-900/50 transition-colors" id="play-audio">
+                        <button class="audio-player ${userData.plan === 'free' ? 'audio-disabled' : ''} bg-indigo-900/30 hover:bg-indigo-900/50 transition-colors" id="play-audio">
                             <i class="fas fa-volume-up text-indigo-400"></i>
                             <span class="text-sm text-indigo-300 ml-2">Ouvir Explicação</span>
                         </button>
@@ -1988,9 +2527,16 @@ const UserManager = (function() {
             }
             
             // Configurar botão de áudio
-            document.getElementById('play-audio').addEventListener('click', function() {
-                playAudio(step.audioUrl);
-            });
+            const playAudioButton = document.getElementById('play-audio');
+            if (playAudioButton) {
+                playAudioButton.addEventListener('click', function() {
+                    if (userData.plan === 'free') {
+                        showUpgradePrompt();
+                    } else {
+                        playAudio(step.audioUrl);
+                    }
+                });
+            }
         }
 
         // Configurar passo interativo
@@ -2184,6 +2730,87 @@ const UserManager = (function() {
             
             document.getElementById('back-to-modules').addEventListener('click', function() {
                 showLevelContent(currentLevel);
+            });
+        }
+
+        // Mostrar tela de planos
+        function showPlansScreen() {
+            levelsScreen.classList.remove('active');
+            contentScreen.classList.remove('active');
+            gamificationScreen.classList.remove('active');
+            plansScreen.classList.add('active');
+        }
+
+        // Selecionar plano
+        function selectPlan(plan) {
+            userData.plan = plan;
+            
+            // Se for premium, restaurar vidas
+            if (plan === 'premium') {
+                userData.lives = 3;
+                userData.lastLifeLoss = null;
+            }
+            
+            saveUserData();
+            updateUserDataDisplay();
+            
+            // Mostrar mensagem de sucesso
+            let message = '';
+            switch(plan) {
+                case 'free':
+                    message = 'Plano Gratis ativado com sucesso!';
+                    break;
+                case 'pro':
+                    message = 'Plano Pro ativado com sucesso! Agora você tem acesso aos áudios explicativos.';
+                    break;
+                case 'premium':
+                    message = 'Plano Premium ativado com sucesso! Agora você tem vidas infinitas e acesso a todos os conteúdos complementares.';
+                    break;
+            }
+            
+            alert(message);
+            showLevelsScreen();
+        }
+
+        // Mostrar prompt de upgrade
+        function showUpgradePrompt() {
+            const upgradeHTML = `
+                <div class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-70">
+                    <div class="bg-gradient-to-br from-purple-600 to-indigo-700 rounded-2xl p-6 max-w-sm mx-4 border-4 border-purple-300">
+                        <div class="text-center">
+                            <div class="w-20 h-20 rounded-full bg-purple-300 flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-crown text-purple-700 text-3xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-white mb-2">Conteúdo Premium</h3>
+                            <p class="text-purple-100 mb-4">Este conteúdo está disponível apenas para assinantes Premium.</p>
+                            <div class="flex space-x-4 justify-center">
+                                <button id="upgrade-now" class="bg-white text-purple-700 font-bold px-6 py-2 rounded-lg transition-all duration-300 transform hover:scale-105">
+                                    Fazer Upgrade
+                                </button>
+                                <button id="cancel-upgrade" class="bg-transparent border border-white text-white font-bold px-6 py-2 rounded-lg transition-all duration-300">
+                                    Cancelar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', upgradeHTML);
+            
+            document.getElementById('upgrade-now').addEventListener('click', function() {
+                const upgradeElement = document.querySelector('.fixed.inset-0');
+                if (upgradeElement) {
+                    upgradeElement.remove();
+                }
+                showPlansScreen();
+            });
+            
+            document.getElementById('cancel-upgrade').addEventListener('click', function() {
+                const upgradeElement = document.querySelector('.fixed.inset-0');
+                if (upgradeElement) {
+                    upgradeElement.remove();
+                }
             });
         }
 
