@@ -1,0 +1,2204 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeMaster - Domine JavaScript Profissional</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+        
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #10b981;
+            --accent: #f59e0b;
+            --danger: #ef4444;
+            --dark: #0f172a;
+            --darker: #0a0f1c;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            height: 100%;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
+            color: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .app-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .code-editor {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .console-output {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+        }
+        
+        .level-card {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: linear-gradient(145deg, #1e293b, #1e293b);
+            border: 1px solid #334155;
+            cursor: pointer;
+        }
+        
+        .level-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+            border-color: var(--primary);
+        }
+        
+        .lesson-card {
+            transition: all 0.3s ease;
+            background: rgba(30, 41, 59, 0.7);
+            border-left: 3px solid transparent;
+            cursor: pointer;
+        }
+        
+        .lesson-card:hover {
+            background: rgba(30, 41, 59, 0.9);
+            border-left-color: var(--primary);
+            transform: translateX(5px);
+        }
+        
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.5s ease;
+            transform: translateY(20px);
+            overflow-y: auto;
+            padding-bottom: 2rem;
+        }
+        
+        .screen.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .glow {
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.5);
+        }
+        
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+        
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .gradient-text {
+            background: linear-gradient(90deg, #6366f1, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .hologram-effect {
+            background: linear-gradient(125deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .slide-in {
+            animation: slideIn 0.5s ease-out forwards;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        .pulse-glow {
+            animation: pulseGlow 2s infinite;
+        }
+        
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 5px rgba(99, 102, 241, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.8); }
+            100% { box-shadow: 0 0 5px rgba(99, 102, 241, 0.5); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .zoom-in {
+            animation: zoomIn 0.6s ease-out forwards;
+        }
+        
+        @keyframes zoomIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        .level-icon {
+            transition: all 0.3s ease;
+        }
+        
+        .level-card:hover .level-icon {
+            transform: scale(1.2) rotate(5deg);
+        }
+        
+        .back-button {
+            transition: all 0.3s ease;
+        }
+        
+        .back-button:hover {
+            transform: translateX(-5px);
+        }
+        
+        .locked {
+            opacity: 0.7;
+            filter: grayscale(0.3);
+        }
+        
+        .locked:hover {
+            transform: none;
+            box-shadow: none;
+            border-color: #334155;
+            cursor: not-allowed;
+        }
+        
+        .gamification-card {
+            transition: all 0.3s ease;
+            background: rgba(30, 41, 59, 0.7);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid transparent;
+        }
+        
+        .gamification-card.active {
+            border-left-color: var(--primary);
+            background: rgba(30, 41, 59, 0.9);
+        }
+        
+        .audio-player {
+            background: rgba(30, 41, 59, 0.7);
+            border-radius: 50px;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .progress-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #4b5563;
+            transition: all 0.3s ease;
+        }
+        
+        .progress-dot.active {
+            background: var(--primary);
+            transform: scale(1.2);
+        }
+        
+        .progress-dot.completed {
+            background: var(--secondary);
+        }
+        
+        .completion-badge {
+            animation: bounce 0.5s ease;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 60%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            80% { transform: translateY(-5px); }
+        }
+        
+        .pulse-slow {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .life {
+            transition: all 0.3s ease;
+        }
+        
+        .life.lost {
+            opacity: 0.3;
+            transform: scale(0.8);
+        }
+        
+        .timer {
+            font-variant-numeric: tabular-nums;
+        }
+        
+        .achievement-unlocked {
+            animation: achievementUnlock 0.8s ease-out forwards;
+        }
+        
+        @keyframes achievementUnlock {
+            0% { transform: scale(0.8); opacity: 0; }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        .shake {
+            animation: shake 0.5s ease-in-out;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        
+        .code-completion-option {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .code-completion-option:hover {
+            transform: translateY(-2px);
+        }
+        
+        .code-gap {
+            background: #f59e0b;
+            color: #000;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        
+        .real-scenario {
+            background: rgba(59, 130, 246, 0.1);
+            border-left: 4px solid #3b82f6;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .professional-tip {
+            background: rgba(16, 185, 129, 0.1);
+            border-left: 4px solid #10b981;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div class="app-container">
+        <!-- Header -->
+        <header class="hologram-effect sticky top-0 z-50">
+            <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+                <div class="flex items-center space-x-3 cursor-pointer" id="logo">
+                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center floating">
+                        <i class="fas fa-code text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold gradient-text">CodeMaster</h1>
+                        <p class="text-xs text-gray-400">JavaScript Profissional</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-6">
+                    <div class="hidden md:flex items-center space-x-4">
+                        <div class="flex items-center space-x-2 bg-gray-800 rounded-full px-4 py-2">
+                            <div class="w-8 h-8 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 flex items-center justify-center">
+                                <span class="font-bold text-white">U</span>
+                            </div>
+                            <span class="text-sm">Dev</span>
+                            <i class="fas fa-chevron-down text-gray-400"></i>
+                        </div>
+                        
+                        <div class="flex items-center space-x-2">
+                            <div class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center">
+                                <i class="fas fa-medal text-yellow-500"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-400">Pontuação</p>
+                                <p class="text-sm font-bold"><span id="user-xp">0</span> XP</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Sistema de Vidas -->
+                        <div class="flex items-center space-x-2">
+                            <div class="flex space-x-1">
+                                <div class="life w-6 h-6 rounded-full bg-red-500 flex items-center justify-center">
+                                    <i class="fas fa-heart text-white text-xs"></i>
+                                </div>
+                                <div class="life w-6 h-6 rounded-full bg-red-500 flex items-center justify-center">
+                                    <i class="fas fa-heart text-white text-xs"></i>
+                                </div>
+                                <div class="life w-6 h-6 rounded-full bg-red-500 flex items-center justify-center">
+                                    <i class="fas fa-heart text-white text-xs"></i>
+                                </div>
+                            </div>
+                            <div class="text-xs text-gray-400" id="lives-restore-timer"></div>
+                        </div>
+                    </div>
+                    
+                    <button class="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 px-4 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 pulse-glow">
+                        <i class="fas fa-rocket mr-2"></i>Modo Prático
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Tela Inicial - Trilha de Aprendizado -->
+        <div id="levels-screen" class="screen active">
+            <div class="container mx-auto px-6 py-8">
+                <div class="text-center mb-12 fade-in">
+                    <h2 class="text-4xl font-bold gradient-text mb-4">Trilha de Aprendizado</h2>
+                    <p class="text-xl text-gray-300 max-w-2xl mx-auto">Domine JavaScript com projetos reais do mercado. Cada nível oferece desafios profissionais para prepará-lo para o mercado de trabalho.</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+                    <div class="level-card rounded-2xl p-6 border-l-4 border-l-green-500 zoom-in glow" data-level="beginner">
+                        <div class="flex flex-col items-center text-center">
+                            <div class="w-20 h-20 rounded-full bg-green-900/30 flex items-center justify-center mb-4 level-icon">
+                                <i class="fas fa-seedling text-green-500 text-3xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold mb-2">Nível 1: Iniciante</h3>
+                            <p class="text-gray-300 mb-4">Fundamentos da linguagem JavaScript</p>
+                            <div class="w-full bg-gray-700 h-2 rounded-full mb-2">
+                                <div class="bg-green-500 h-2 rounded-full progress-level-beginner" style="width: 0%"></div>
+                            </div>
+                            <span class="text-sm text-gray-400 progress-text-beginner">0% completo</span>
+                        </div>
+                    </div>
+                    
+                    <div class="level-card rounded-2xl p-6 border-l-4 border-l-blue-500 zoom-in locked" data-level="intermediate">
+                        <div class="flex flex-col items-center text-center">
+                            <div class="w-20 h-20 rounded-full bg-blue-900/30 flex items-center justify-center mb-4 level-icon">
+                                <i class="fas fa-code-branch text-blue-500 text-3xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold mb-2">Nível 2: Intermediário</h3>
+                            <p class="text-gray-300 mb-4">Estruturas de controle e funções</p>
+                            <div class="w-full bg-gray-700 h-2 rounded-full mb-2">
+                                <div class="bg-gray-500 h-2 rounded-full progress-level-intermediate" style="width: 0%"></div>
+                            </div>
+                            <span class="text-sm text-gray-400 flex items-center progress-text-intermediate">
+                                <i class="fas fa-lock mr-1"></i> Bloqueado
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="level-card rounded-2xl p-6 border-l-4 border-l-purple-500 zoom-in locked" data-level="advanced">
+                        <div class="flex flex-col items-center text-center">
+                            <div class="w-20 h-20 rounded-full bg-purple-900/30 flex items-center justify-center mb-4 level-icon">
+                                <i class="fas fa-bolt text-purple-500 text-3xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold mb-2">Nível 3: Avançado</h3>
+                            <p class="text-gray-300 mb-4">Programação assíncrona e APIs</p>
+                            <div class="w-full bg-gray-700 h-2 rounded-full mb-2">
+                                <div class="bg-gray-500 h-2 rounded-full progress-level-advanced" style="width: 0%"></div>
+                            </div>
+                            <span class="text-sm text-gray-400 flex items-center progress-text-advanced">
+                                <i class="fas fa-lock mr-1"></i> Bloqueado
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="level-card rounded-2xl p-6 border-l-4 border-l-red-500 zoom-in locked" data-level="expert">
+                        <div class="flex flex-col items-center text-center">
+                            <div class="w-20 h-20 rounded-full bg-red-900/30 flex items-center justify-center mb-4 level-icon">
+                                <i class="fas fa-crown text-red-500 text-3xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold mb-2">Nível 4: Especialista</h3>
+                            <p class="text-gray-300 mb-4">Padrões de projeto e otimização</p>
+                            <div class="w-full bg-gray-700 h-2 rounded-full mb-2">
+                                <div class="bg-gray-500 h-2 rounded-full progress-level-expert" style="width: 0%"></div>
+                            </div>
+                            <span class="text-sm text-gray-400 flex items-center progress-text-expert">
+                                <i class="fas fa-lock mr-1"></i> Bloqueado
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-16 text-center fade-in">
+                    <h3 class="text-2xl font-bold mb-6">Conquistas</h3>
+                    <div class="flex flex-wrap justify-center gap-4 max-w-4xl mx-auto" id="achievements-global-container">
+                        <!-- Conquistas serão carregadas dinamicamente aqui -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tela de Conteúdo do Nível -->
+        <div id="content-screen" class="screen">
+            <div class="container mx-auto px-6 py-8">
+                <button id="back-button" class="back-button mb-6 bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-lg transition-all duration-300 flex items-center">
+                    <i class="fas fa-arrow-left mr-2"></i>Voltar para Trilha
+                </button>
+                
+                <div class="flex flex-col xl:flex-row gap-8">
+                    <!-- Sidebar - Lições -->
+                    <div class="w-full xl:w-1/4">
+                        <div class="hologram-effect rounded-2xl p-6 mb-6">
+                            <h2 class="text-xl font-bold mb-4 flex items-center" id="level-title">
+                                <i class="fas fa-layer-group mr-3 text-indigo-400"></i>
+                                Nível Selecionado
+                            </h2>
+                            
+                            <div class="space-y-4" id="lessons-container">
+                                <!-- Lições serão carregadas dinamicamente aqui -->
+                            </div>
+                        </div>
+                        
+                        <div class="hologram-effect rounded-2xl p-6">
+                            <h2 class="text-xl font-bold mb-4 flex items-center">
+                                <i class="fas fa-trophy mr-3 text-yellow-500"></i>
+                                Conquistas do Nível
+                            </h2>
+                            
+                            <div class="space-y-4" id="achievements-container">
+                                <!-- Conquistas serão carregadas dinamicamente aqui -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Conteúdo Principal -->
+                    <div class="w-full xl:w-3/4">
+                        <div class="hologram-effect rounded-2xl p-6 mb-6">
+                            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6">
+                                <div>
+                                    <h2 class="text-2xl font-bold gradient-text" id="lesson-title">Selecione uma Lição</h2>
+                                    <p class="text-gray-400" id="lesson-description">Clique em uma lição à esquerda para ver seu conteúdo</p>
+                                </div>
+                                
+                                <div class="flex space-x-3 mt-4 lg:mt-0">
+                                    <button class="bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center">
+                                        <i class="fas fa-chevron-left mr-2"></i>Anterior
+                                    </button>
+                                    <button class="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 px-4 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center pulse-glow">
+                                        Próximo<i class="fas fa-chevron-right ml-2"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div id="lesson-content">
+                                <!-- Conteúdo da lição será carregado dinamicamente aqui -->
+                                <div class="text-center py-12">
+                                    <div class="w-32 h-32 mx-auto mb-6 rounded-full bg-gray-800 flex items-center justify-center">
+                                        <i class="fas fa-book-open text-5xl text-gray-600"></i>
+                                    </div>
+                                    <h3 class="text-2xl font-bold mb-4">Nenhuma Lição Selecionada</h3>
+                                    <p class="text-gray-400 max-w-md mx-auto">Selecione uma lição no menu à esquerda para começar a aprender e praticar JavaScript.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tela de Gamificação -->
+        <div id="gamification-screen" class="screen">
+            <div class="container mx-auto px-6 py-8">
+                <button id="back-to-level-button" class="back-button mb-6 bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-lg transition-all duration-300 flex items-center">
+                    <i class="fas fa-arrow-left mr-2"></i>Voltar para Módulos
+                </button>
+                
+                <div class="max-w-4xl mx-auto">
+                    <div class="hologram-effect rounded-2xl p-6 mb-6">
+                        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6">
+                            <div>
+                                <h2 class="text-2xl font-bold gradient-text" id="gamification-lesson-title">Introdução ao JavaScript</h2>
+                                <p class="text-gray-400" id="gamification-lesson-description">Nível 1 - Iniciante</p>
+                            </div>
+                            
+                            <div class="flex items-center space-x-4 mt-4 lg:mt-0">
+                                <!-- Timer -->
+                                <div class="flex items-center space-x-2 bg-gray-800 rounded-full px-4 py-2">
+                                    <i class="fas fa-clock text-blue-400"></i>
+                                    <span class="text-sm text-gray-300 timer" id="lesson-timer">00:00</span>
+                                </div>
+                                
+                                <!-- Vidas -->
+                                <div class="flex items-center space-x-2 bg-gray-800 rounded-full px-4 py-2">
+                                    <div class="flex space-x-1">
+                                        <div class="life w-5 h-5 rounded-full bg-red-500 flex items-center justify-center" id="life-1">
+                                            <i class="fas fa-heart text-white text-xs"></i>
+                                        </div>
+                                        <div class="life w-5 h-5 rounded-full bg-red-500 flex items-center justify-center" id="life-2">
+                                            <i class="fas fa-heart text-white text-xs"></i>
+                                        </div>
+                                        <div class="life w-5 h-5 rounded-full bg-red-500 flex items-center justify-center" id="life-3">
+                                            <i class="fas fa-heart text-white text-xs"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-sm text-gray-400">Progresso:</span>
+                                    <div class="w-24 bg-gray-700 h-2 rounded-full">
+                                        <div class="bg-green-500 h-2 rounded-full" id="gamification-progress" style="width: 0%"></div>
+                                    </div>
+                                    <span class="text-sm text-gray-400" id="gamification-progress-text">0/5</span>
+                                </div>
+                                
+                                <button class="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 px-4 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center pulse-glow" id="next-gamification-step">
+                                    Próximo<i class="fas fa-chevron-right ml-2"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Indicador de Progresso -->
+                        <div class="flex justify-between mb-8">
+                            <div class="flex space-x-2" id="progress-dots-container">
+                                <!-- Dots de progresso serão adicionados dinamicamente -->
+                            </div>
+                        </div>
+                        
+                        <div id="gamification-content">
+                            <!-- Conteúdo de gamificação será carregado dinamicamente aqui -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Elemento de Áudio -->
+    <audio id="audio-player" preload="auto"></audio>
+
+    <script>
+        // ===== SISTEMA DE GERENCIAMENTO DE ESTADO DO USUÁRIO =====
+        const USER_DATA_KEY = 'codeMasterUserData';
+        
+        // Estado inicial do usuário
+        const initialUserState = {
+            xp: 0,
+            lives: 3,
+            lastLifeLoss: null,
+            unlockedLevels: ['beginner'],
+            completedLessons: {},
+            achievements: {},
+            lessonTimes: {},
+            perfectLessons: {},
+            currentStreak: 0,
+            longestStreak: 0,
+            lastActivity: null
+        };
+        
+        // Carregar dados do usuário
+        function loadUserData() {
+            const stored = localStorage.getItem(USER_DATA_KEY);
+            if (stored) {
+                return JSON.parse(stored);
+            }
+            return {...initialUserState};
+        }
+        
+        // Salvar dados do usuário
+        function saveUserData() {
+            localStorage.setItem(USER_DATA_KEY, JSON.stringify(userData));
+        }
+        
+        // Verificar e restaurar vidas
+        function checkAndRestoreLives() {
+            const now = Date.now();
+            const oneHour = 60 * 60 * 1000; // 1 hora em milissegundos
+            
+            // Se a última perda de vida foi há mais de 1 hora, restaurar para 3 vidas
+            if (userData.lastLifeLoss && (now - userData.lastLifeLoss) >= oneHour) {
+                userData.lives = 3;
+                userData.lastLifeLoss = null;
+                saveUserData();
+            }
+            
+            // Atualizar timer de restauração de vidas
+            updateLivesRestoreTimer();
+        }
+        
+        // Atualizar timer de restauração de vidas
+        function updateLivesRestoreTimer() {
+            const timerElement = document.getElementById('lives-restore-timer');
+            if (!timerElement || !userData.lastLifeLoss) return;
+            
+            const now = Date.now();
+            const oneHour = 60 * 60 * 1000;
+            const timePassed = now - userData.lastLifeLoss;
+            const timeRemaining = oneHour - timePassed;
+            
+            if (timeRemaining > 0) {
+                const minutes = Math.floor(timeRemaining / 60000);
+                const seconds = Math.floor((timeRemaining % 60000) / 1000);
+                timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            } else {
+                timerElement.textContent = '';
+                userData.lives = 3;
+                userData.lastLifeLoss = null;
+                saveUserData();
+            }
+        }
+        
+        // Perder uma vida
+        function loseLife() {
+            if (userData.lives > 0) {
+                userData.lives--;
+                userData.lastLifeLoss = Date.now();
+                saveUserData();
+                updateLivesDisplay();
+                currentLessonLostLife = true;
+                
+                // Efeito visual de perda de vida
+                const lifeElement = document.getElementById(`life-${userData.lives + 1}`);
+                if (lifeElement) {
+                    lifeElement.classList.add('lost', 'shake');
+                }
+                
+                // Verificar se acabaram as vidas
+                if (userData.lives <= 0) {
+                    setTimeout(() => {
+                        showNoLivesScreen();
+                    }, 1000);
+                }
+            }
+        }
+        
+        // Atualizar exibição de vidas
+        function updateLivesDisplay() {
+            const lifeElements = [
+                document.getElementById('life-1'),
+                document.getElementById('life-2'),
+                document.getElementById('life-3')
+            ];
+            
+            lifeElements.forEach((element, index) => {
+                if (element) {
+                    if (index < userData.lives) {
+                        element.classList.remove('lost');
+                    } else {
+                        element.classList.add('lost');
+                    }
+                }
+            });
+            
+            // Atualizar timer de restauração
+            updateLivesRestoreTimer();
+        }
+        
+        // Adicionar XP
+        function addXP(amount) {
+            userData.xp += amount;
+            document.getElementById('user-xp').textContent = userData.xp;
+            saveUserData();
+        }
+        
+        // Verificar e desbloquear conquistas
+        function checkAchievements(lessonId, timeTaken, perfectLesson) {
+            const achievementsToCheck = [
+                {
+                    id: 'first_steps',
+                    title: 'Primeiros Passos',
+                    description: 'Complete a primeira lição',
+                    condition: () => Object.keys(userData.completedLessons).length >= 1,
+                    xp: 50
+                },
+                {
+                    id: 'speed_demon',
+                    title: 'Demônio da Velocidade',
+                    description: 'Complete uma lição em menos de 30 segundos',
+                    condition: () => timeTaken < 30,
+                    xp: 100
+                },
+                {
+                    id: 'perfectionist',
+                    title: 'Perfeccionista',
+                    description: 'Complete uma lição sem perder vidas',
+                    condition: () => perfectLesson,
+                    xp: 75
+                },
+                {
+                    id: 'beginner_master',
+                    title: 'Mestre Iniciante',
+                    description: 'Complete todas as lições do nível iniciante',
+                    condition: () => {
+                        const beginnerLessons = levelsData.beginner.lessons;
+                        return beginnerLessons.every(lesson => userData.completedLessons[lesson.id]);
+                    },
+                    xp: 200
+                },
+                {
+                    id: 'three_day_streak',
+                    title: 'Sequência de 3 Dias',
+                    description: 'Complete lições por 3 dias consecutivos',
+                    condition: () => userData.currentStreak >= 3,
+                    xp: 150
+                }
+            ];
+            
+            achievementsToCheck.forEach(achievement => {
+                if (!userData.achievements[achievement.id] && achievement.condition()) {
+                    userData.achievements[achievement.id] = true;
+                    addXP(achievement.xp);
+                    showAchievementUnlocked(achievement.title, achievement.description);
+                }
+            });
+            
+            saveUserData();
+        }
+        
+        // Mostrar conquista desbloqueada
+        function showAchievementUnlocked(title, description) {
+            const achievementHTML = `
+                <div class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-70">
+                    <div class="bg-gradient-to-br from-yellow-500 to-orange-500 rounded-2xl p-6 max-w-sm mx-4 border-4 border-yellow-300 achievement-unlocked">
+                        <div class="text-center">
+                            <div class="w-20 h-20 rounded-full bg-yellow-300 flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-trophy text-yellow-700 text-3xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-white mb-2">Conquista Desbloqueada!</h3>
+                            <h4 class="text-lg font-bold text-white mb-2">${title}</h4>
+                            <p class="text-yellow-100 mb-4">${description}</p>
+                            <button class="bg-white text-yellow-700 font-bold px-6 py-2 rounded-lg transition-all duration-300 transform hover:scale-105">
+                                Incrível!
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', achievementHTML);
+            
+            // Remover após 3 segundos
+            setTimeout(() => {
+                const achievementElement = document.querySelector('.fixed.inset-0');
+                if (achievementElement) {
+                    achievementElement.remove();
+                }
+            }, 3000);
+        }
+        
+        // Tela de sem vidas
+        function showNoLivesScreen() {
+            const noLivesHTML = `
+                <div class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-80">
+                    <div class="bg-gradient-to-br from-red-500 to-pink-600 rounded-2xl p-8 max-w-md mx-4 border-4 border-red-300 text-center">
+                        <div class="w-24 h-24 rounded-full bg-red-300 flex items-center justify-center mx-auto mb-6">
+                            <i class="fas fa-heart-broken text-red-700 text-4xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-4">Sem Vidas!</h3>
+                        <p class="text-red-100 mb-6">Você perdeu todas as suas vidas. Elas serão restauradas automaticamente em 1 hora.</p>
+                        <div class="flex space-x-4 justify-center">
+                            <button id="close-no-lives" class="bg-white text-red-700 font-bold px-6 py-3 rounded-lg transition-all duration-300 transform hover:scale-105">
+                                Entendi
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', noLivesHTML);
+            
+            document.getElementById('close-no-lives').addEventListener('click', function() {
+                const noLivesElement = document.querySelector('.fixed.inset-0');
+                if (noLivesElement) {
+                    noLivesElement.remove();
+                }
+                showLevelsScreen();
+            });
+        }
+        
+        // ===== DADOS DA APLICAÇÃO =====
+        let userData = loadUserData();
+        
+        // Dados completos dos níveis e lições
+        const levelsData = {
+            beginner: {
+                title: "Nível 1: Iniciante",
+                subtitle: "Fundamentos da linguagem JavaScript",
+                description: "Aprenda os conceitos básicos da linguagem JavaScript, desde sintaxe até estruturas fundamentais.",
+                lessons: [
+                    { 
+                        id: 1, 
+                        title: "Introdução ao JavaScript", 
+                        description: "Conceitos básicos e sintaxe", 
+                        duration: "15 min", 
+                        icon: "fas fa-play-circle", 
+                        color: "green",
+                        gamification: {
+                            steps: [
+                                {
+                                    type: "theory",
+                                    title: "O que é JavaScript?",
+                                    content: `
+                                        <div class="mb-6">
+                                            <h3 class="text-xl font-bold mb-4 text-indigo-400">JavaScript no Mercado</h3>
+                                            <p class="text-gray-300 mb-4">
+                                                JavaScript é a linguagem de programação mais popular do mundo, usada por 97% dos sites. 
+                                                Empresas como Netflix, Facebook, Uber e Airbnb usam JavaScript em seus produtos.
+                                            </p>
+                                            <div class="real-scenario">
+                                                <h4 class="font-bold mb-2 text-blue-400">Cenário Real:</h4>
+                                                <p class="text-sm text-gray-300">
+                                                    Você foi contratado para desenvolver uma funcionalidade interativa em um site de e-commerce. 
+                                                    Precisa validar formulários e criar animações para melhorar a experiência do usuário.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    `,
+                                    audioUrl: "audios/intro-js.mp3"
+                                },
+                                {
+                                    type: "theory",
+                                    title: "Primeiro Código",
+                                    content: `
+                                        <div class="mb-6">
+                                            <h3 class="text-xl font-bold mb-4 text-indigo-400">Seu Primeiro Código Profissional</h3>
+                                            <p class="text-gray-300 mb-4">
+                                                Em projetos reais, usamos <code class="bg-gray-800 px-1 rounded text-purple-400">console.log()</code> 
+                                                para debug e verificação de valores durante o desenvolvimento.
+                                            </p>
+                                            <div class="bg-gray-900 rounded-lg p-4 mb-4">
+                                                <h4 class="font-bold mb-2 text-green-400">Exemplo Profissional:</h4>
+                                                <pre class="text-green-400 code-editor bg-gray-800 p-4 rounded-lg overflow-x-auto">
+// Debug de variáveis em produção
+console.log("Inicializando sistema...");
+console.log("Usuário:", usuario);
+console.log("Produtos carregados:", produtos.length);</pre>
+                                            </div>
+                                            <div class="professional-tip">
+                                                <h4 class="font-bold mb-2 text-green-400">Dica Profissional:</h4>
+                                                <p class="text-sm text-gray-300">
+                                                    Use console.log para debug durante desenvolvimento, mas remova antes de enviar para produção.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    `,
+                                    audioUrl: "audios/primeiro-codigo.mp3"
+                                },
+                                {
+                                    type: "interactive",
+                                    title: "Debug de Sistema",
+                                    content: `
+                                        <div class="mb-6">
+                                            <h3 class="text-xl font-bold mb-4 text-indigo-400">Debug na Prática</h3>
+                                            <p class="text-gray-300 mb-4">
+                                                Você está desenvolvendo um sistema de login. Complete o código para debuggar quando um usuário faz login.
+                                            </p>
+                                            <div class="mb-4">
+                                                <div class="bg-gray-900 rounded-lg border border-gray-700 overflow-hidden">
+                                                    <textarea id="interactive-code-1" class="w-full h-32 bg-gray-900 text-white code-editor p-4 focus:outline-none" spellcheck="false">// Sistema de login - debug de usuário
+let usuario = "joao.silva";
+let loginSucesso = true;
+
+// Adicione o console.log para debug aqui</textarea>
+                                                </div>
+                                            </div>
+                                            <button id="check-interactive-1" class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 px-6 py-3 rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center pulse-glow">
+                                                <i class="fas fa-play mr-2"></i>Executar Código
+                                            </button>
+                                            <div class="bg-gray-900 rounded-xl p-4 mt-4">
+                                                <h4 class="font-bold mb-2 flex items-center text-green-500">
+                                                    <i class="fas fa-terminal mr-2"></i>
+                                                    Console de Saída
+                                                </h4>
+                                                <div class="bg-gray-800 p-4 rounded-lg h-20 overflow-y-auto">
+                                                    <pre id="interactive-output-1" class="console-output text-green-400">Clique em "Executar Código" para ver a saída.</pre>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `,
+                                    audioUrl: "audios/complete-codigo.mp3"
+                                },
+                                {
+                                    type: "code-completion",
+                                    title: "Complete o Código",
+                                    content: `
+                                        <div class="mb-6">
+                                            <h3 class="text-xl font-bold mb-4 text-indigo-400">Validação de Formulário</h3>
+                                            <p class="text-gray-300 mb-4">
+                                                Você está desenvolvendo um formulário de cadastro. Selecione a opção correta para validar um email:
+                                            </p>
+                                            <div class="bg-gray-900 rounded-lg p-4 mb-4">
+                                                <pre class="text-green-400 code-editor bg-gray-800 p-4 rounded-lg overflow-x-auto">
+let email = "usuario@empresa.com";
+let emailValido = email.<span class="code-gap" id="code-gap">______</span>("@");</pre>
+                                            </div>
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <div class="code-completion-option bg-gray-800 hover:bg-gray-700 p-4 rounded-lg border-2 border-gray-700" data-correct="false">
+                                                    <span class="font-mono text-lg">validar</span>
+                                                </div>
+                                                <div class="code-completion-option bg-gray-800 hover:bg-gray-700 p-4 rounded-lg border-2 border-gray-700" data-correct="true">
+                                                    <span class="font-mono text-lg">includes</span>
+                                                </div>
+                                                <div class="code-completion-option bg-gray-800 hover:bg-gray-700 p-4 rounded-lg border-2 border-gray-700" data-correct="false">
+                                                    <span class="font-mono text-lg">check</span>
+                                                </div>
+                                                <div class="code-completion-option bg-gray-800 hover:bg-gray-700 p-4 rounded-lg border-2 border-gray-700" data-correct="false">
+                                                    <span class="font-mono text-lg">contains</span>
+                                                </div>
+                                            </div>
+                                            <div id="code-completion-feedback" class="mt-4 hidden p-4 rounded-lg"></div>
+                                        </div>
+                                    `,
+                                    audioUrl: "audios/code-completion.mp3"
+                                },
+                                {
+                                    type: "quiz",
+                                    title: "Teste Seu Conhecimento",
+                                    content: `
+                                        <div class="mb-6">
+                                            <h3 class="text-xl font-bold mb-4 text-indigo-400">Pergunta de Entrevista</h3>
+                                            <p class="text-gray-300 mb-4">
+                                                Em uma entrevista de emprego, perguntam: Qual método JavaScript usamos para verificar se uma string contém determinado caractere?
+                                            </p>
+                                            <div class="space-y-3">
+                                                <div class="quiz-option bg-gray-800 hover:bg-gray-700 p-4 rounded-lg cursor-pointer transition-colors" data-correct="false">
+                                                    <span class="font-medium">A) contains()</span>
+                                                </div>
+                                                <div class="quiz-option bg-gray-800 hover:bg-gray-700 p-4 rounded-lg cursor-pointer transition-colors" data-correct="false">
+                                                    <span class="font-medium">B) has()</span>
+                                                </div>
+                                                <div class="quiz-option bg-gray-800 hover:bg-gray-700 p-4 rounded-lg cursor-pointer transition-colors" data-correct="true">
+                                                    <span class="font-medium">C) includes()</span>
+                                                </div>
+                                                <div class="quiz-option bg-gray-800 hover:bg-gray-700 p-4 rounded-lg cursor-pointer transition-colors" data-correct="false">
+                                                    <span class="font-medium">D) find()</span>
+                                                </div>
+                                            </div>
+                                            <div id="quiz-feedback" class="mt-4 hidden p-4 rounded-lg"></div>
+                                        </div>
+                                    `,
+                                    audioUrl: "audios/quiz-final.mp3"
+                                }
+                            ]
+                        }
+                    },
+                    { 
+                        id: 2, 
+                        title: "Variáveis e Tipos de Dados", 
+                        description: "Armazenando e manipulando dados", 
+                        duration: "20 min", 
+                        icon: "fas fa-database", 
+                        color: "green",
+                        gamification: {
+                            steps: [
+                                {
+                                    type: "theory",
+                                    title: "Variáveis no Mercado",
+                                    content: `
+                                        <div class="mb-6">
+                                            <h3 class="text-xl font-bold mb-4 text-indigo-400">Variáveis em Projetos Reais</h3>
+                                            <p class="text-gray-300 mb-4">
+                                                Em projetos profissionais, usamos <code class="bg-gray-800 px-1 rounded text-purple-400">const</code> para valores que não mudam 
+                                                e <code class="bg-gray-800 px-1 rounded text-purple-400">let</code> para valores que podem ser reatribuídos.
+                                            </p>
+                                            <div class="bg-gray-900 rounded-lg p-4 mb-4">
+                                                <h4 class="font-bold mb-2 text-green-400">Exemplo Real:</h4>
+                                                <pre class="text-green-400 code-editor bg-gray-800 p-4 rounded-lg overflow-x-auto">
+// Configurações do sistema (constantes)
+const API_URL = "https://api.empresa.com/v1";
+const MAX_USUARIOS = 1000;
+
+// Dados que podem mudar (let)
+let usuarioAtual = null;
+let carrinho = [];</pre>
+                                            </div>
+                                            <div class="real-scenario">
+                                                <h4 class="font-bold mb-2 text-blue-400">Cenário Real:</h4>
+                                                <p class="text-sm text-gray-300">
+                                                    Você está desenvolvendo um carrinho de compras. Precisa armazenar produtos temporariamente 
+                                                    enquanto o usuário navega pelo site.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    `,
+                                    audioUrl: "audios/variaveis.mp3"
+                                },
+                                {
+                                    type: "code-completion",
+                                    title: "Declare Variáveis para E-commerce",
+                                    content: `
+                                        <div class="mb-6">
+                                            <h3 class="text-xl font-bold mb-4 text-indigo-400">Sistema de E-commerce</h3>
+                                            <p class="text-gray-300 mb-4">
+                                                Você está criando um sistema de e-commerce. Complete as declarações de variáveis:
+                                            </p>
+                                            <div class="bg-gray-900 rounded-lg p-4 mb-4">
+                                                <pre class="text-green-400 code-editor bg-gray-800 p-4 rounded-lg overflow-x-auto">
+// Preço base do produto (não muda)
+<span class="code-gap" id="code-gap-2">______</span> PRECO_BASE = 29.90;
+
+// Quantidade no carrinho (pode mudar)
+<span class="code-gap" id="code-gap-3">______</span> quantidade = 1;</pre>
+                                            </div>
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <div class="code-completion-option bg-gray-800 hover:bg-gray-700 p-4 rounded-lg border-2 border-gray-700" data-correct="true">
+                                                    <span class="font-mono text-lg">const, let</span>
+                                                </div>
+                                                <div class="code-completion-option bg-gray-800 hover:bg-gray-700 p-4 rounded-lg border-2 border-gray-700" data-correct="false">
+                                                    <span class="font-mono text-lg">let, const</span>
+                                                </div>
+                                                <div class="code-completion-option bg-gray-800 hover:bg-gray-700 p-4 rounded-lg border-2 border-gray-700" data-correct="false">
+                                                    <span class="font-mono text-lg">var, var</span>
+                                                </div>
+                                                <div class="code-completion-option bg-gray-800 hover:bg-gray-700 p-4 rounded-lg border-2 border-gray-700" data-correct="false">
+                                                    <span class="font-mono text-lg">const, const</span>
+                                                </div>
+                                            </div>
+                                            <div id="code-completion-feedback-2" class="mt-4 hidden p-4 rounded-lg"></div>
+                                        </div>
+                                    `,
+                                    audioUrl: "audios/declare-variavel.mp3"
+                                }
+                            ]
+                        }
+                    },
+                    { 
+                        id: 3, 
+                        title: "Operadores", 
+                        description: "Realizando operações com dados", 
+                        duration: "25 min", 
+                        icon: "fas fa-calculator", 
+                        color: "green",
+                        gamification: {
+                            steps: [
+                                {
+                                    type: "theory",
+                                    title: "Operadores em Sistemas Reais",
+                                    content: `
+                                        <div class="mb-6">
+                                            <h3 class="text-xl font-bold mb-4 text-indigo-400">Operadores no Desenvolvimento Web</h3>
+                                            <p class="text-gray-300 mb-4">
+                                                Operadores são fundamentais para lógica de negócio, cálculos e validações em aplicações web.
+                                            </p>
+                                            <div class="bg-gray-900 rounded-lg p-4 mb-4">
+                                                <h4 class="font-bold mb-2 text-green-400">Exemplo: Sistema de Descontos</h4>
+                                                <pre class="text-green-400 code-editor bg-gray-800 p-4 rounded-lg overflow-x-auto">
+// Cálculo de preço com desconto
+let precoOriginal = 100;
+let desconto = 20;
+let precoFinal = precoOriginal - (precoOriginal * desconto / 100);
+
+// Verificação de elegibilidade para desconto
+let ehClienteVIP = true;
+let temCupom = false;
+let elegivelDesconto = ehClienteVIP || temCupom;</pre>
+                                            </div>
+                                            <div class="professional-tip">
+                                                <h4 class="font-bold mb-2 text-green-400">Dica Profissional:</h4>
+                                                <p class="text-sm text-gray-300">
+                                                    Use operadores lógicos (&&, ||) para criar regras de negócio complexas de forma legível.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    `,
+                                    audioUrl: "audios/operadores.mp3"
+                                }
+                            ]
+                        }
+                    },
+                    { 
+                        id: 4, 
+                        title: "Funções Básicas", 
+                        description: "Organizando e reutilizando código", 
+                        duration: "30 min", 
+                        icon: "fas fa-cube", 
+                        color: "green",
+                        gamification: {
+                            steps: [
+                                {
+                                    type: "theory",
+                                    title: "Funções em Projetos Reais",
+                                    content: `
+                                        <div class="mb-6">
+                                            <h3 class="text-xl font-bold mb-4 text-indigo-400">Funções no Desenvolvimento Profissional</h3>
+                                            <p class="text-gray-300 mb-4">
+                                                Funções permitem organizar código em blocos reutilizáveis, essencial para projetos grandes e manutenção.
+                                            </p>
+                                            <div class="bg-gray-900 rounded-lg p-4 mb-4">
+                                                <h4 class="font-bold mb-2 text-green-400">Exemplo: Sistema de Pagamento</h4>
+                                                <pre class="text-green-400 code-editor bg-gray-800 p-4 rounded-lg overflow-x-auto">
+// Função para calcular imposto
+function calcularImposto(valor, taxa) {
+    return valor * (taxa / 100);
+}
+
+// Função para formatar moeda
+function formatarMoeda(valor) {
+    return 'R$ ' + valor.toFixed(2).replace('.', ',');
+}</pre>
+                                            </div>
+                                            <div class="real-scenario">
+                                                <h4 class="font-bold mb-2 text-blue-400">Cenário Real:</h4>
+                                                <p class="text-sm text-gray-300">
+                                                    Você está desenvolvendo um sistema financeiro. Precisa criar funções reutilizáveis 
+                                                    para cálculos e formatação que serão usados em todo o sistema.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    `,
+                                    audioUrl: "audios/funcoes.mp3"
+                                }
+                            ]
+                        }
+                    },
+                    { 
+                        id: 5, 
+                        title: "Arrays e Objetos", 
+                        description: "Trabalhando com estruturas de dados", 
+                        duration: "35 min", 
+                        icon: "fas fa-list", 
+                        color: "green",
+                        gamification: {
+                            steps: [
+                                {
+                                    type: "theory",
+                                    title: "Estruturas de Dados no Mercado",
+                                    content: `
+                                        <div class="mb-6">
+                                            <h3 class="text-xl font-bold mb-4 text-indigo-400">Arrays e Objetos em Aplicações Reais</h3>
+                                            <p class="text-gray-300 mb-4">
+                                                Arrays e objetos são as estruturas de dados mais usadas em JavaScript para representar 
+                                                listas e entidades do mundo real.
+                                            </p>
+                                            <div class="bg-gray-900 rounded-lg p-4 mb-4">
+                                                <h4 class="font-bold mb-2 text-green-400">Exemplo: Sistema de Usuários</h4>
+                                                <pre class="text-green-400 code-editor bg-gray-800 p-4 rounded-lg overflow-x-auto">
+// Array de usuários
+let usuarios = [
+    { id: 1, nome: "João", email: "joao@empresa.com" },
+    { id: 2, nome: "Maria", email: "maria@empresa.com" }
+];
+
+// Objeto de produto
+let produto = {
+    id: 101,
+    nome: "Smartphone",
+    preco: 999.90,
+    emEstoque: true
+};</pre>
+                                            </div>
+                                            <div class="professional-tip">
+                                                <h4 class="font-bold mb-2 text-green-400">Dica Profissional:</h4>
+                                                <p class="text-sm text-gray-300">
+                                                    Use objetos para representar entidades (usuários, produtos) e arrays para listas dessas entidades.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    `,
+                                    audioUrl: "audios/arrays-objetos.mp3"
+                                }
+                            ]
+                        }
+                    }
+                ],
+                achievements: [
+                    { id: 'first_steps', title: "Primeiros Passos", description: "Complete a primeira lição", icon: "fas fa-check", color: "green" },
+                    { id: 'beginner_master', title: "Mestre Iniciante", description: "Complete todas as lições do nível iniciante", icon: "fas fa-graduation-cap", color: "blue" },
+                    { id: 'perfectionist', title: "Perfeccionista", description: "Complete um módulo sem perder uma vida", icon: "fas fa-crown", color: "yellow" }
+                ]
+            },
+            intermediate: {
+                title: "Nível 2: Intermediário",
+                subtitle: "Estruturas de controle e funções avançadas",
+                description: "Domine estruturas de controle de fluxo e funções avançadas para criar programas mais complexos e profissionais.",
+                lessons: [
+                    { 
+                        id: 1, 
+                        title: "Estruturas Condicionais", 
+                        description: "Tomando decisões no código", 
+                        duration: "25 min", 
+                        icon: "fas fa-code-branch", 
+                        color: "blue",
+                        gamification: {
+                            steps: [
+                                {
+                                    type: "theory",
+                                    title: "Condicionais em Sistemas Reais",
+                                    content: `
+                                        <div class="mb-6">
+                                            <h3 class="text-xl font-bold mb-4 text-indigo-400">Condicionais no Desenvolvimento Web</h3>
+                                            <p class="text-gray-300 mb-4">
+                                                Estruturas condicionais são essenciais para criar lógica de negócio e tomar decisões baseadas em dados.
+                                            </p>
+                                            <div class="bg-gray-900 rounded-lg p-4 mb-4">
+                                                <h4 class="font-bold mb-2 text-green-400">Exemplo: Sistema de Autorização</h4>
+                                                <pre class="text-green-400 code-editor bg-gray-800 p-4 rounded-lg overflow-x-auto">
+// Verificação de permissões
+function verificarAcesso(usuario, recurso) {
+    if (usuario.admin) {
+        return true;
+    } else if (usuario.permissoes.includes(recurso)) {
+        return true;
+    } else {
+        return false;
+    }
+}</pre>
+                                            </div>
+                                            <div class="real-scenario">
+                                                <h4 class="font-bold mb-2 text-blue-400">Cenário Real:</h4>
+                                                <p class="text-sm text-gray-300">
+                                                    Você está desenvolvendo um sistema com diferentes níveis de acesso. 
+                                                    Precisa verificar permissões antes de permitir acesso a recursos sensíveis.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    `,
+                                    audioUrl: "audios/condicionais.mp3"
+                                }
+                            ]
+                        }
+                    },
+                    { 
+                        id: 2, 
+                        title: "Loops e Iterações", 
+                        description: "Trabalhando com repetições", 
+                        duration: "30 min", 
+                        icon: "fas fa-redo", 
+                        color: "blue",
+                        gamification: {
+                            steps: [
+                                {
+                                    type: "theory",
+                                    title: "Loops em Processamento de Dados",
+                                    content: `
+                                        <div class="mb-6">
+                                            <h3 class="text-xl font-bold mb-4 text-indigo-400">Loops no Processamento em Lote</h3>
+                                            <p class="text-gray-300 mb-4">
+                                                Loops são fundamentais para processar listas de dados, como usuários, produtos ou transações.
+                                            </p>
+                                            <div class="bg-gray-900 rounded-lg p-4 mb-4">
+                                                <h4 class="font-bold mb-2 text-green-400">Exemplo: Processamento de Pedidos</h4>
+                                                <pre class="text-green-400 code-editor bg-gray-800 p-4 rounded-lg overflow-x-auto">
+// Calcular total do pedido
+function calcularTotal(pedidos) {
+    let total = 0;
+    for (let i = 0; i < pedidos.length; i++) {
+        total += pedidos[i].preco * pedidos[i].quantidade;
+    }
+    return total;
+}</pre>
+                                            </div>
+                                            <div class="professional-tip">
+                                                <h4 class="font-bold mb-2 text-green-400">Dica Profissional:</h4>
+                                                <p class="text-sm text-gray-300">
+                                                    Use métodos de array como forEach, map e filter para código mais legível e funcional.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    `,
+                                    audioUrl: "audios/loops.mp3"
+                                }
+                            ]
+                        }
+                    },
+                    { 
+                        id: 3, 
+                        title: "Funções Avançadas", 
+                        description: "Arrow functions e callbacks", 
+                        duration: "40 min", 
+                        icon: "fas fa-cubes", 
+                        color: "blue",
+                        gamification: {
+                            steps: [
+                                {
+                                    type: "theory",
+                                    title: "Funções Modernas no JavaScript",
+                                    content: `
+                                        <div class="mb-6">
+                                            <h3 class="text-xl font-bold mb-4 text-indigo-400">Arrow Functions e Callbacks</h3>
+                                            <p class="text-gray-300 mb-4">
+                                                Arrow functions e callbacks são essenciais para JavaScript moderno, especialmente com APIs e eventos.
+                                            </p>
+                                            <div class="bg-gray-900 rounded-lg p-4 mb-4">
+                                                <h4 class="font-bold mb-2 text-green-400">Exemplo: Event Listeners</h4>
+                                                <pre class="text-green-400 code-editor bg-gray-800 p-4 rounded-lg overflow-x-auto">
+// Arrow function como callback
+document.getElementById('botao')
+    .addEventListener('click', () => {
+        console.log('Botão clicado!');
+    });
+
+// Callback com parâmetros
+usuarios.forEach(usuario => {
+    console.log(usuario.nome);
+});</pre>
+                                            </div>
+                                            <div class="real-scenario">
+                                                <h4 class="font-bold mb-2 text-blue-400">Cenário Real:</h4>
+                                                <p class="text-sm text-gray-300">
+                                                    Você está criando uma interface interativa. Precisa usar callbacks para 
+                                                    responder a eventos do usuário como cliques e entradas de formulário.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    `,
+                                    audioUrl: "audios/funcoes-avancadas.mp3"
+                                }
+                            ]
+                        }
+                    }
+                ],
+                achievements: [
+                    { id: 'function_master', title: "Mestre de Funções", description: "Complete a lição sobre funções", icon: "fas fa-cube", color: "blue" },
+                    { id: 'logic_master', title: "Mestre da Lógica", description: "Complete a lição sobre estruturas condicionais", icon: "fas fa-code-branch", color: "purple" },
+                    { id: 'data_processor', title: "Processador de Dados", description: "Complete a lição sobre loops e iterações", icon: "fas fa-redo", color: "green" }
+                ]
+            },
+            advanced: {
+                title: "Nível 3: Avançado",
+                subtitle: "Programação assíncrona e APIs",
+                description: "Domine conceitos avançados como programação assíncrona, manipulação de APIs e padrões modernos de JavaScript.",
+                lessons: [
+                    { 
+                        id: 1, 
+                        title: "Promises e Async/Await", 
+                        description: "Trabalhando com código assíncrono", 
+                        duration: "50 min", 
+                        icon: "fas fa-bolt", 
+                        color: "purple",
+                        gamification: {
+                            steps: [
+                                {
+                                    type: "theory",
+                                    title: "Assincronicidade no Mundo Real",
+                                    content: `
+                                        <div class="mb-6">
+                                            <h3 class="text-xl font-bold mb-4 text-indigo-400">Async/Await em APIs</h3>
+                                            <p class="text-gray-300 mb-4">
+                                                Async/await é essencial para trabalhar com APIs, bancos de dados e operações que levam tempo.
+                                            </p>
+                                            <div class="bg-gray-900 rounded-lg p-4 mb-4">
+                                                <h4 class="font-bold mb-2 text-green-400">Exemplo: Consumo de API</h4>
+                                                <pre class="text-green-400 code-editor bg-gray-800 p-4 rounded-lg overflow-x-auto">
+// Buscar dados de usuário da API
+async function buscarUsuario(id) {
+    try {
+        const resposta = await fetch(\`/api/usuarios/\${id}\`);
+        const usuario = await resposta.json();
+        return usuario;
+    } catch (erro) {
+        console.error('Erro ao buscar usuário:', erro);
+    }
+}</pre>
+                                            </div>
+                                            <div class="real-scenario">
+                                                <h4 class="font-bold mb-2 text-blue-400">Cenário Real:</h4>
+                                                <p class="text-sm text-gray-300">
+                                                    Você está desenvolvendo um dashboard que consome dados de múltiplas APIs. 
+                                                    Precisa garantir que os dados sejam carregados antes de renderizar a interface.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    `,
+                                    audioUrl: "audios/async-await.mp3"
+                                }
+                            ]
+                        }
+                    },
+                    { 
+                        id: 2, 
+                        title: "Manipulação do DOM", 
+                        description: "Interagindo com a página web", 
+                        duration: "45 min", 
+                        icon: "fas fa-window-maximize", 
+                        color: "purple",
+                        gamification: {
+                            steps: [
+                                {
+                                    type: "theory",
+                                    title: "DOM em Aplicações Modernas",
+                                    content: `
+                                        <div class="mb-6">
+                                            <h3 class="text-xl font-bold mb-4 text-indigo-400">Manipulação Dinâmica do DOM</h3>
+                                            <p class="text-gray-300 mb-4">
+                                                A manipulação do DOM é fundamental para criar interfaces interativas e responsivas.
+                                            </p>
+                                            <div class="bg-gray-900 rounded-lg p-4 mb-4">
+                                                <h4 class="font-bold mb-2 text-green-400">Exemplo: Lista Dinâmica</h4>
+                                                <pre class="text-green-400 code-editor bg-gray-800 p-4 rounded-lg overflow-x-auto">
+// Adicionar item à lista
+function adicionarItemLista(texto) {
+    const lista = document.getElementById('minha-lista');
+    const novoItem = document.createElement('li');
+    novoItem.textContent = texto;
+    lista.appendChild(novoItem);
+}</pre>
+                                            </div>
+                                            <div class="professional-tip">
+                                                <h4 class="font-bold mb-2 text-green-400">Dica Profissional:</h4>
+                                                <p class="text-sm text-gray-300">
+                                                    Use event delegation para melhor performance quando trabalhar com muitos elementos.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    `,
+                                    audioUrl: "audios/dom.mp3"
+                                }
+                            ]
+                        }
+                    }
+                ],
+                achievements: [
+                    { id: 'async_master', title: "Mestre Assíncrono", description: "Complete a lição sobre async/await", icon: "fas fa-bolt", color: "purple" },
+                    { id: 'dom_master', title: "Mestre do DOM", description: "Complete a lição sobre manipulação do DOM", icon: "fas fa-window-maximize", color: "blue" },
+                    { id: 'api_master', title: "Mestre de APIs", description: "Complete 3 lições sobre APIs", icon: "fas fa-cloud", color: "green" }
+                ]
+            },
+            expert: {
+                title: "Nível 4: Especialista",
+                subtitle: "Padrões de projeto e otimização",
+                description: "Torne-se um especialista em JavaScript dominando padrões de projeto avançados, otimização de performance e técnicas profissionais.",
+                lessons: [
+                    { 
+                        id: 1, 
+                        title: "Padrões de Projeto", 
+                        description: "Padrões comuns em JavaScript", 
+                        duration: "60 min", 
+                        icon: "fas fa-puzzle-piece", 
+                        color: "red",
+                        gamification: {
+                            steps: [
+                                {
+                                    type: "theory",
+                                    title: "Padrões em Projetos de Grande Escala",
+                                    content: `
+                                        <div class="mb-6">
+                                            <h3 class="text-xl font-bold mb-4 text-indigo-400">Padrões de Projeto JavaScript</h3>
+                                            <p class="text-gray-300 mb-4">
+                                                Padrões de projeto resolvem problemas comuns de arquitetura e facilitam a manutenção de código.
+                                            </p>
+                                            <div class="bg-gray-900 rounded-lg p-4 mb-4">
+                                                <h4 class="font-bold mb-2 text-green-400">Exemplo: Módulo (Module Pattern)</h4>
+                                                <pre class="text-green-400 code-editor bg-gray-800 p-4 rounded-lg overflow-x-auto">
+// Módulo para gerenciar usuários
+const UserManager = (function() {
+    let usuarios = [];
+    
+    function adicionar(usuario) {
+        usuarios.push(usuario);
+    }
+    
+    function listar() {
+        return [...usuarios]; // Retorna cópia
+    }
+    
+    return { adicionar, listar };
+})();</pre>
+                                            </div>
+                                            <div class="real-scenario">
+                                                <h4 class="font-bold mb-2 text-blue-400">Cenário Real:</h4>
+                                                <p class="text-sm text-gray-300">
+                                                    Você está desenvolvendo uma aplicação grande com múltiplos desenvolvedores. 
+                                                    Precisa organizar o código em módulos para evitar conflitos e facilitar manutenção.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    `,
+                                    audioUrl: "audios/padroes-projeto.mp3"
+                                }
+                            ]
+                        }
+                    }
+                ],
+                achievements: [
+                    { id: 'pattern_master', title: "Mestre de Padrões", description: "Complete a lição sobre padrões de projeto", icon: "fas fa-puzzle-piece", color: "red" },
+                    { id: 'optimizer', title: "Otimizador", description: "Complete a lição sobre otimização de performance", icon: "fas fa-tachometer-alt", color: "green" },
+                    { id: 'js_architect', title: "Arquiteto JavaScript", description: "Complete todas as lições do nível especialista", icon: "fas fa-crown", color: "yellow" }
+                ]
+            }
+        };
+
+        // ===== VARIÁVEIS DE ESTADO DA APLICAÇÃO =====
+        let currentLevel = null;
+        let currentLesson = null;
+        let currentGamificationStep = 0;
+        let currentGamificationData = null;
+        let lessonStartTime = null;
+        let lessonTimerInterval = null;
+        let currentLessonLostLife = false;
+        let currentLessonTime = 0;
+
+        // ===== ELEMENTOS DA DOM =====
+        const levelsScreen = document.getElementById('levels-screen');
+        const contentScreen = document.getElementById('content-screen');
+        const gamificationScreen = document.getElementById('gamification-screen');
+        const backButton = document.getElementById('back-button');
+        const backToLevelButton = document.getElementById('back-to-level-button');
+        const levelTitle = document.getElementById('level-title');
+        const lessonsContainer = document.getElementById('lessons-container');
+        const achievementsContainer = document.getElementById('achievements-container');
+        const lessonTitle = document.getElementById('lesson-title');
+        const lessonDescription = document.getElementById('lesson-description');
+        const lessonContent = document.getElementById('lesson-content');
+        const logo = document.getElementById('logo');
+        const gamificationLessonTitle = document.getElementById('gamification-lesson-title');
+        const gamificationLessonDescription = document.getElementById('gamification-lesson-description');
+        const gamificationContent = document.getElementById('gamification-content');
+        const gamificationProgress = document.getElementById('gamification-progress');
+        const gamificationProgressText = document.getElementById('gamification-progress-text');
+        const nextGamificationStepButton = document.getElementById('next-gamification-step');
+        const progressDotsContainer = document.getElementById('progress-dots-container');
+        const achievementsGlobalContainer = document.getElementById('achievements-global-container');
+        const audioPlayer = document.getElementById('audio-player');
+
+        // ===== INICIALIZAÇÃO DA APLICAÇÃO =====
+        document.addEventListener('DOMContentLoaded', function() {
+            // Atualizar dados do usuário na interface
+            updateUserDataDisplay();
+            
+            // Configurar eventos dos cards de nível
+            document.querySelectorAll('.level-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    // Verificar se o nível está bloqueado
+                    if (this.classList.contains('locked')) {
+                        // Mostrar mensagem de nível bloqueado
+                        const levelName = this.querySelector('h3').textContent;
+                        alert(`O ${levelName} está bloqueado. Complete o nível anterior para desbloqueá-lo.`);
+                        return;
+                    }
+                    
+                    const level = this.getAttribute('data-level');
+                    showLevelContent(level);
+                });
+            });
+
+            // Configurar botão de voltar
+            backButton.addEventListener('click', function() {
+                showLevelsScreen();
+            });
+
+            // Configurar botão de voltar para módulos
+            backToLevelButton.addEventListener('click', function() {
+                showLevelContent(currentLevel);
+            });
+
+            // Configurar logo para voltar à tela inicial
+            logo.addEventListener('click', function() {
+                showLevelsScreen();
+            });
+
+            // Configurar botão de próximo passo na gamificação
+            nextGamificationStepButton.addEventListener('click', function() {
+                nextGamificationStep();
+            });
+            
+            // Iniciar timer de verificação de vidas
+            setInterval(checkAndRestoreLives, 1000);
+        });
+
+        // ===== FUNÇÕES PRINCIPAIS =====
+        
+        // Atualizar dados do usuário na interface
+        function updateUserDataDisplay() {
+            // Atualizar XP
+            document.getElementById('user-xp').textContent = userData.xp;
+            
+            // Atualizar vidas
+            updateLivesDisplay();
+            
+            // Atualizar progresso dos níveis
+            updateLevelsProgress();
+            
+            // Atualizar conquistas
+            updateAchievementsDisplay();
+        }
+        
+        // Atualizar progresso dos níveis
+        function updateLevelsProgress() {
+            for (const level in levelsData) {
+                const levelLessons = levelsData[level].lessons;
+                const completedLessons = levelLessons.filter(lesson => 
+                    userData.completedLessons[lesson.id]
+                ).length;
+                
+                const progress = (completedLessons / levelLessons.length) * 100;
+                
+                // Atualizar barra de progresso
+                const progressBar = document.querySelector(`.progress-level-${level}`);
+                const progressText = document.querySelector(`.progress-text-${level}`);
+                
+                if (progressBar && progressText) {
+                    progressBar.style.width = `${progress}%`;
+                    
+                    if (progress > 0) {
+                        progressText.textContent = `${Math.round(progress)}% completo`;
+                    }
+                }
+                
+                // Verificar se o nível deve ser desbloqueado
+                if (progress === 100 && level !== 'beginner') {
+                    const nextLevel = getNextLevel(level);
+                    if (nextLevel && !userData.unlockedLevels.includes(nextLevel)) {
+                        userData.unlockedLevels.push(nextLevel);
+                        saveUserData();
+                        
+                        // Atualizar visual do nível desbloqueado
+                        const levelCard = document.querySelector(`[data-level="${nextLevel}"]`);
+                        if (levelCard) {
+                            levelCard.classList.remove('locked');
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Obter próximo nível
+        function getNextLevel(currentLevel) {
+            const levels = ['beginner', 'intermediate', 'advanced', 'expert'];
+            const currentIndex = levels.indexOf(currentLevel);
+            return levels[currentIndex + 1];
+        }
+        
+        // Atualizar exibição de conquistas
+        function updateAchievementsDisplay() {
+            // Conquistas globais
+            achievementsGlobalContainer.innerHTML = '';
+            
+            // Coletar todas as conquistas de todos os níveis
+            const allAchievements = [];
+            for (const level in levelsData) {
+                allAchievements.push(...levelsData[level].achievements);
+            }
+            
+            allAchievements.forEach(achievement => {
+                const isUnlocked = userData.achievements[achievement.id];
+                
+                const achievementElement = document.createElement('div');
+                achievementElement.className = `flex items-center bg-gray-800 ${isUnlocked ? 'bg-green-900/30' : 'bg-gray-800/30'} rounded-xl p-4 ${isUnlocked ? '' : 'opacity-50'}`;
+                
+                achievementElement.innerHTML = `
+                    <div class="w-12 h-12 rounded-full ${isUnlocked ? 'bg-green-700' : 'bg-gray-700'} flex items-center justify-center mr-3">
+                        <i class="${achievement.icon} ${isUnlocked ? 'text-green-500' : 'text-gray-500'}"></i>
+                    </div>
+                    <div class="text-left">
+                        <h4 class="font-bold ${isUnlocked ? 'text-green-500' : 'text-gray-500'}">${achievement.title}</h4>
+                        <p class="text-xs ${isUnlocked ? 'text-green-400' : 'text-gray-600'}">${achievement.description}</p>
+                    </div>
+                `;
+                
+                achievementsGlobalContainer.appendChild(achievementElement);
+            });
+            
+            // Conquistas do nível atual (se houver)
+            if (achievementsContainer && currentLevel) {
+                achievementsContainer.innerHTML = '';
+                
+                const levelAchievements = levelsData[currentLevel].achievements;
+                
+                levelAchievements.forEach(achievement => {
+                    const isUnlocked = userData.achievements[achievement.id];
+                    
+                    const achievementElement = document.createElement('div');
+                    achievementElement.className = `flex items-center p-3 rounded-lg ${isUnlocked ? 'bg-green-900/30' : 'bg-gray-800/30'} ${isUnlocked ? '' : 'opacity-50'}`;
+                    
+                    achievementElement.innerHTML = `
+                        <div class="w-12 h-12 rounded-full ${isUnlocked ? 'bg-green-700' : 'bg-gray-700'} flex items-center justify-center mr-3">
+                            <i class="${achievement.icon} ${isUnlocked ? 'text-green-500' : 'text-gray-500'}"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold ${isUnlocked ? 'text-green-500' : 'text-gray-500'}">${achievement.title}</h4>
+                            <p class="text-xs ${isUnlocked ? 'text-green-400' : 'text-gray-600'}">${achievement.description}</p>
+                        </div>
+                    `;
+                    
+                    achievementsContainer.appendChild(achievementElement);
+                });
+            }
+        }
+
+        // Mostrar tela de níveis
+        function showLevelsScreen() {
+            levelsScreen.classList.add('active');
+            contentScreen.classList.remove('active');
+            gamificationScreen.classList.remove('active');
+            currentLevel = null;
+            currentLesson = null;
+            
+            // Atualizar dados do usuário
+            updateUserDataDisplay();
+        }
+
+        // Mostrar conteúdo do nível selecionado
+        function showLevelContent(level) {
+            levelsScreen.classList.remove('active');
+            contentScreen.classList.add('active');
+            gamificationScreen.classList.remove('active');
+            
+            currentLevel = level;
+            const levelData = levelsData[level];
+            
+            // Atualizar informações do nível
+            levelTitle.innerHTML = `<i class="fas fa-layer-group mr-3 text-indigo-400"></i>${levelData.title}`;
+            
+            // Carregar lições
+            loadLessons(levelData.lessons);
+            
+            // Carregar conquistas
+            updateAchievementsDisplay();
+            
+            // Resetar conteúdo da lição
+            lessonTitle.textContent = "Selecione uma Lição";
+            lessonDescription.textContent = "Clique em uma lição à esquerda para ver seu conteúdo";
+            lessonContent.innerHTML = `
+                <div class="text-center py-12">
+                    <div class="w-32 h-32 mx-auto mb-6 rounded-full bg-gray-800 flex items-center justify-center">
+                        <i class="fas fa-book-open text-5xl text-gray-600"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">Nenhuma Lição Selecionada</h3>
+                    <p class="text-gray-400 max-w-md mx-auto">Selecione uma lição no menu à esquerda para começar a aprender e praticar JavaScript.</p>
+                </div>
+            `;
+        }
+
+        // Carregar lições no container
+        function loadLessons(lessons) {
+            lessonsContainer.innerHTML = '';
+            
+            lessons.forEach(lesson => {
+                const isCompleted = userData.completedLessons[lesson.id];
+                
+                const lessonCard = document.createElement('div');
+                lessonCard.className = `lesson-card rounded-xl p-4 cursor-pointer slide-in ${isCompleted ? 'border-l-green-500' : 'border-l-blue-500'}`;
+                lessonCard.setAttribute('data-lesson-id', lesson.id);
+                
+                lessonCard.innerHTML = `
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 rounded-lg bg-${lesson.color}-900/30 flex items-center justify-center mr-3">
+                                <i class="${lesson.icon} text-${lesson.color}-500"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold">${lesson.title}</h4>
+                                <p class="text-xs text-gray-400">${lesson.description}</p>
+                            </div>
+                        </div>
+                        ${isCompleted ? 
+                            '<i class="fas fa-check-circle text-green-500 text-xl"></i>' : 
+                            '<i class="fas fa-play-circle text-blue-500 text-xl"></i>'
+                        }
+                    </div>
+                    <div class="flex justify-between items-center mt-3">
+                        <span class="text-xs text-gray-400 flex items-center">
+                            <i class="fas fa-clock mr-1"></i> ${lesson.duration}
+                        </span>
+                        ${isCompleted ? 
+                            '<span class="text-xs bg-green-900/30 text-green-400 px-2 py-1 rounded-full">Concluído</span>' : 
+                            '<span class="text-xs bg-blue-900/30 text-blue-400 px-2 py-1 rounded-full">Não iniciado</span>'
+                        }
+                    </div>
+                `;
+                
+                lessonsContainer.appendChild(lessonCard);
+                
+                // Adicionar evento de clique para a lição
+                lessonCard.addEventListener('click', function() {
+                    const lessonId = this.getAttribute('data-lesson-id');
+                    const lesson = lessons.find(l => l.id == lessonId);
+                    
+                    // Se a lição tem gamificação, mostrar tela de gamificação
+                    if (lesson.gamification) {
+                        showGamification(lesson);
+                    } else {
+                        // Caso contrário, mostrar conteúdo padrão
+                        showLessonContent(lesson);
+                    }
+                });
+            });
+        }
+
+        // Mostrar conteúdo da lição selecionada
+        function showLessonContent(lesson) {
+            currentLesson = lesson;
+            
+            // Atualizar título e descrição
+            lessonTitle.textContent = lesson.title;
+            lessonDescription.textContent = lesson.description;
+            
+            // Carregar conteúdo da lição
+            lessonContent.innerHTML = `
+                <div class="bg-gray-800/50 rounded-xl p-6 mb-6">
+                    <h3 class="text-xl font-bold mb-4 flex items-center">
+                        <i class="fas fa-lightbulb text-yellow-500 mr-3"></i>
+                        Conteúdo da Lição
+                    </h3>
+                    <p class="text-gray-300 mb-4">
+                        Esta lição está em desenvolvimento. Em breve terá conteúdo completo com teoria e exercícios.
+                    </p>
+                    <div class="bg-yellow-900/20 p-4 rounded-lg border-l-4 border-l-yellow-500">
+                        <h4 class="font-bold mb-2 text-yellow-300">Em Breve</h4>
+                        <p class="text-sm text-gray-300">
+                            Estamos trabalhando para trazer o melhor conteúdo de JavaScript para você.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="text-center py-6">
+                    <button class="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 px-6 py-3 rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center mx-auto pulse-glow">
+                        <i class="fas fa-rocket mr-2"></i>Começar Lição
+                    </button>
+                </div>
+            `;
+        }
+
+        // Mostrar tela de gamificação
+        function showGamification(lesson) {
+            contentScreen.classList.remove('active');
+            gamificationScreen.classList.add('active');
+            
+            currentLesson = lesson;
+            currentGamificationStep = 0;
+            currentGamificationData = lesson.gamification;
+            currentLessonLostLife = false;
+            currentLessonTime = 0;
+            
+            // Iniciar o timer da lição
+            lessonStartTime = Date.now();
+            lessonTimerInterval = setInterval(updateLessonTimer, 1000);
+            
+            // Atualizar informações da lição
+            gamificationLessonTitle.textContent = lesson.title;
+            gamificationLessonDescription.textContent = `Nível 1 - Iniciante`;
+            
+            // Atualizar vidas
+            updateLivesDisplay();
+            
+            // Criar dots de progresso
+            createProgressDots();
+            
+            // Carregar primeiro passo
+            loadGamificationStep(0);
+        }
+        
+        // Atualizar timer da lição
+        function updateLessonTimer() {
+            currentLessonTime = Math.floor((Date.now() - lessonStartTime) / 1000);
+            const minutes = Math.floor(currentLessonTime / 60);
+            const seconds = currentLessonTime % 60;
+            
+            const timerElement = document.getElementById('lesson-timer');
+            if (timerElement) {
+                timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
+        }
+        
+        // Parar timer da lição
+        function stopLessonTimer() {
+            if (lessonTimerInterval) {
+                clearInterval(lessonTimerInterval);
+                lessonTimerInterval = null;
+            }
+            return currentLessonTime;
+        }
+        
+        // Criar dots de progresso
+        function createProgressDots() {
+            progressDotsContainer.innerHTML = '';
+            
+            if (currentGamificationData && currentGamificationData.steps) {
+                for (let i = 0; i < currentGamificationData.steps.length; i++) {
+                    const dot = document.createElement('div');
+                    dot.className = 'progress-dot';
+                    dot.setAttribute('data-step', i + 1);
+                    progressDotsContainer.appendChild(dot);
+                }
+            }
+        }
+
+        // Carregar passo da gamificação
+        function loadGamificationStep(stepIndex) {
+            currentGamificationStep = stepIndex;
+            const step = currentGamificationData.steps[stepIndex];
+            
+            // Atualizar progresso
+            const progress = ((stepIndex + 1) / currentGamificationData.steps.length) * 100;
+            gamificationProgress.style.width = `${progress}%`;
+            gamificationProgressText.textContent = `${stepIndex + 1}/${currentGamificationData.steps.length}`;
+            
+            // Atualizar dots de progresso
+            document.querySelectorAll('.progress-dot').forEach((dot, index) => {
+                dot.classList.remove('active', 'completed');
+                if (index === stepIndex) {
+                    dot.classList.add('active');
+                } else if (index < stepIndex) {
+                    dot.classList.add('completed');
+                }
+            });
+            
+            // Configurar botão de próximo
+            if (stepIndex === currentGamificationData.steps.length - 1) {
+                nextGamificationStepButton.innerHTML = 'Concluir Lição <i class="fas fa-flag-checkered ml-2"></i>';
+            } else {
+                nextGamificationStepButton.innerHTML = 'Próximo <i class="fas fa-chevron-right ml-2"></i>';
+            }
+            
+            // Carregar conteúdo do passo
+            let contentHTML = `
+                <div class="gamification-card active">
+                    <div class="flex justify-between items-start mb-4">
+                        <h3 class="text-xl font-bold text-indigo-400">${step.title}</h3>
+                        <button class="audio-player bg-indigo-900/30 hover:bg-indigo-900/50 transition-colors" id="play-audio">
+                            <i class="fas fa-volume-up text-indigo-400"></i>
+                            <span class="text-sm text-indigo-300 ml-2">Ouvir Explicação</span>
+                        </button>
+                    </div>
+                    ${step.content}
+                </div>
+            `;
+            
+            gamificationContent.innerHTML = contentHTML;
+            
+            // Configurar eventos específicos do tipo de passo
+            if (step.type === 'interactive') {
+                setupInteractiveStep(stepIndex);
+            } else if (step.type === 'quiz') {
+                setupQuizStep(stepIndex);
+            } else if (step.type === 'code-completion') {
+                setupCodeCompletionStep(stepIndex);
+            }
+            
+            // Configurar botão de áudio
+            document.getElementById('play-audio').addEventListener('click', function() {
+                playAudio(step.audioUrl);
+            });
+        }
+
+        // Configurar passo interativo
+        function setupInteractiveStep(stepIndex) {
+            const checkButton = document.getElementById(`check-interactive-${stepIndex + 1}`);
+            const codeEditor = document.getElementById(`interactive-code-${stepIndex + 1}`);
+            const output = document.getElementById(`interactive-output-${stepIndex + 1}`);
+            
+            if (checkButton && codeEditor && output) {
+                checkButton.addEventListener('click', function() {
+                    // Limpar console
+                    output.textContent = '';
+                    
+                    // Capturar console.log
+                    const originalLog = console.log;
+                    console.log = function(message) {
+                        originalLog.apply(console, arguments);
+                        output.textContent += message + '\n';
+                    };
+                    
+                    // Executar código (com segurança limitada)
+                    try {
+                        eval(codeEditor.value);
+                    } catch (error) {
+                        output.textContent = 'Erro: ' + error.message;
+                    }
+                    
+                    // Restaurar console.log original
+                    console.log = originalLog;
+                    
+                    // Mostrar confirmação
+                    if (output.textContent.includes("joao.silva") || output.textContent.includes("loginSucesso")) {
+                        output.innerHTML += '\n<span class="text-green-500">✓ Parabéns! Debug realizado com sucesso.</span>';
+                        nextGamificationStepButton.disabled = false;
+                    } else {
+                        output.innerHTML += '\n<span class="text-red-500">✗ Resposta incorreta. Tente novamente!</span>';
+                    }
+                });
+                
+                // Desabilitar próximo até completar corretamente
+                nextGamificationStepButton.disabled = true;
+            }
+        }
+
+        // Configurar passo de quiz
+        function setupQuizStep(stepIndex) {
+            const options = document.querySelectorAll('.quiz-option');
+            const feedback = document.getElementById('quiz-feedback');
+            
+            options.forEach(option => {
+                option.addEventListener('click', function() {
+                    // Remover seleção anterior
+                    options.forEach(opt => {
+                        opt.classList.remove('bg-green-900/30', 'bg-red-900/30', 'border-green-500', 'border-red-500');
+                    });
+                    
+                    // Verificar resposta
+                    const isCorrect = this.getAttribute('data-correct') === 'true';
+                    
+                    if (isCorrect) {
+                        this.classList.add('bg-green-900/30', 'border-green-500', 'border-2');
+                        feedback.innerHTML = '<span class="text-green-500">✓ Correto! includes() é o método correto para verificar se uma string contém determinado caractere.</span>';
+                        feedback.classList.remove('hidden');
+                        feedback.classList.add('bg-green-900/20');
+                        
+                        // Habilitar botão de próximo após resposta correta
+                        nextGamificationStepButton.disabled = false;
+                    } else {
+                        this.classList.add('bg-red-900/30', 'border-red-500', 'border-2');
+                        feedback.innerHTML = '<span class="text-red-500">✗ Resposta incorreta. Tente novamente!</span>';
+                        feedback.classList.remove('hidden');
+                        feedback.classList.add('bg-red-900/20');
+                        
+                        // Perder uma vida
+                        loseLife();
+                    }
+                });
+            });
+            
+            // Desabilitar próximo até responder corretamente
+            nextGamificationStepButton.disabled = true;
+        }
+        
+        // Configurar passo de completar código
+        function setupCodeCompletionStep(stepIndex) {
+            const options = document.querySelectorAll('.code-completion-option');
+            const feedbackId = `code-completion-feedback${stepIndex > 0 ? '-' + (stepIndex + 1) : ''}`;
+            const feedback = document.getElementById(feedbackId);
+            
+            options.forEach(option => {
+                option.addEventListener('click', function() {
+                    // Remover seleção anterior
+                    options.forEach(opt => {
+                        opt.classList.remove('bg-green-900/30', 'bg-red-900/30', 'border-green-500', 'border-red-500');
+                    });
+                    
+                    // Verificar resposta
+                    const isCorrect = this.getAttribute('data-correct') === 'true';
+                    
+                    if (isCorrect) {
+                        this.classList.add('bg-green-900/30', 'border-green-500', 'border-2');
+                        if (feedback) {
+                            feedback.innerHTML = '<span class="text-green-500">✓ Correto! Você selecionou a opção correta.</span>';
+                            feedback.classList.remove('hidden');
+                            feedback.classList.add('bg-green-900/20');
+                        }
+                        
+                        // Habilitar botão de próximo após resposta correta
+                        nextGamificationStepButton.disabled = false;
+                    } else {
+                        this.classList.add('bg-red-900/30', 'border-red-500', 'border-2');
+                        if (feedback) {
+                            feedback.innerHTML = '<span class="text-red-500">✗ Resposta incorreta. Tente novamente!</span>';
+                            feedback.classList.remove('hidden');
+                            feedback.classList.add('bg-red-900/20');
+                        }
+                        
+                        // Perder uma vida
+                        loseLife();
+                    }
+                });
+            });
+            
+            // Desabilitar próximo até responder corretamente
+            nextGamificationStepButton.disabled = true;
+        }
+
+        // Avançar para o próximo passo na gamificação
+        function nextGamificationStep() {
+            if (currentGamificationStep < currentGamificationData.steps.length - 1) {
+                loadGamificationStep(currentGamificationStep + 1);
+            } else {
+                // Lição concluída
+                completeLesson();
+            }
+        }
+
+        // Concluir lição
+        function completeLesson() {
+            const timeTaken = stopLessonTimer();
+            const perfectLesson = !currentLessonLostLife;
+            
+            // Salvar progresso da lição
+            userData.completedLessons[currentLesson.id] = true;
+            
+            // Salvar tempo da lição
+            userData.lessonTimes[currentLesson.id] = timeTaken;
+            
+            // Salvar se foi uma lição perfeita
+            if (perfectLesson) {
+                userData.perfectLessons[currentLesson.id] = true;
+            }
+            
+            // Adicionar XP
+            addXP(50);
+            
+            // Verificar e desbloquear conquistas
+            checkAchievements(currentLesson.id, timeTaken, perfectLesson);
+            
+            // Salvar dados do usuário
+            saveUserData();
+            
+            // Mostrar tela de conclusão
+            gamificationContent.innerHTML = `
+                <div class="text-center py-12">
+                    <div class="w-32 h-32 mx-auto mb-6 rounded-full bg-green-900/30 flex items-center justify-center completion-badge">
+                        <i class="fas fa-trophy text-5xl text-green-500"></i>
+                    </div>
+                    <h3 class="text-3xl font-bold mb-4 text-green-500">Parabéns!</h3>
+                    <p class="text-xl text-gray-300 mb-6">Você completou a lição "${currentLesson.title}"</p>
+                    <div class="bg-gray-800/50 rounded-xl p-6 max-w-md mx-auto mb-6">
+                        <h4 class="text-lg font-bold mb-3 text-yellow-400">Recompensas</h4>
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-gray-300">XP Ganho:</span>
+                            <span class="text-green-400 font-bold">+50 XP</span>
+                        </div>
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-gray-300">Tempo:</span>
+                            <span class="text-blue-400 font-bold">${timeTaken}s</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-300">Status:</span>
+                            <span class="text-${perfectLesson ? 'green' : 'yellow'}-400 font-bold">${perfectLesson ? 'Perfeito! ✨' : 'Concluído'}</span>
+                        </div>
+                    </div>
+                    <button id="back-to-modules" class="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 px-6 py-3 rounded-lg transition-all duration-300 transform hover:scale-105 pulse-slow">
+                        <i class="fas fa-arrow-left mr-2"></i>Voltar para Módulos
+                    </button>
+                </div>
+            `;
+            
+            document.getElementById('back-to-modules').addEventListener('click', function() {
+                showLevelContent(currentLevel);
+            });
+        }
+
+        // Reproduzir áudio personalizado
+        function playAudio(audioUrl) {
+            if (audioUrl) {
+                audioPlayer.src = audioUrl;
+                audioPlayer.play().catch(e => {
+                    console.error("Erro ao reproduzir áudio:", e);
+                    alert("Erro ao reproduzir áudio. Verifique se o arquivo de áudio existe.");
+                });
+            } else {
+                alert("Áudio não disponível para esta lição.");
+            }
+        }
+    </script>
+</body>
+</html>
